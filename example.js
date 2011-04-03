@@ -7,7 +7,7 @@ base64 = comp.toString('base64')
 comp2 = new Buffer(base64, 'base64')
 console.log(snappy.uncompress(comp2))
 console.log(
-	snappy.uncompress(
+	snappy.decompress(
 		snappy.compress(
 			"foobar foobar foobar foobar foobar foobar foobar foobar foobar"
 		)

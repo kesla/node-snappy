@@ -13,15 +13,13 @@ def configure(conf):
   conf.check_tool('node_addon')
 
 def build(bld):
-
   bld(features = 'cxx cstaticlib',
       source = 'lib/snappy.cc lib/snappy-sinksource.cc',
       includes = "lib/",
-      target = 'snappylib',
+      target = 'snappy',
       install_path = None,
       name = 'snappylib',
-      cxxflags = ['-fPIC', '-Wall'])
-
+      cxxflags = ['-fPIC'])
 
   obj = bld.new_task_gen('cxx', 'shlib', 'node_addon')
   obj.target = 'snappy'
