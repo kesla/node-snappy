@@ -1,6 +1,6 @@
 // simple, and somewhat stupid example
 
-snappy = require('./build/default/snappy')
+snappy = require('snappy')
 
 comp = snappy.compress("foo foo foo  Fasfa daos asd foo foo foo asdasf bar bar aarr")
 base64 = comp.toString('base64')
