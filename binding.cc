@@ -50,6 +50,5 @@ init(v8::Handle<v8::Object> target)
   	v8::FunctionTemplate::New(snappy_uncompress_binding)->GetFunction();
 	
 	target->Set(v8::String::New("compress"), compress_fun);
-	target->Set(v8::String::New("decompress"), uncompress_fun);
 	target->Set(v8::String::New("uncompress"), uncompress_fun);
 }
