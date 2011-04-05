@@ -30,14 +30,12 @@ v8::Handle<v8::Value>
 snappy_uncompress_binding(const v8::Arguments& args)
 {
   v8::HandleScope scope;
-  v8::Local<v8::String> ret;
   std::string dst;
 	v8::Handle<v8::Object> buffer = args[0]->ToObject();
 	char* data = node::Buffer::Data(buffer);
 	size_t length = node::Buffer::Length(buffer);
   snappy::Uncompress(data, length, &dst);
-  ret = v8::String::New(dst.data(), dst.length());
-  return scope.Close(ret);
+	return scope.Close(createBuffer(dst));
 }
 
 extern "C" void

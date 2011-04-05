@@ -5,12 +5,18 @@ exports.compress = (input) ->
 		input = JSON.stringify(input)
 	binding.compress(input)
 
-exports.uncompress = (compressed) ->
+exports.parsers =
+	json: (buffer) ->
+		return JSON.parse buffer
+
+	string: (buffer) ->
+		return buffer.toString("utf8")
+	
+	raw: (buffer)->
+		return buffer
+
+exports.uncompress = (compressed, parse = @parsers.raw) ->
 	ret = binding.uncompress(compressed)
-	try
-		return JSON.parse ret
-		console.log "foo"
-	catch e
-	return ret
+	return parse ret
 
 exports.decompress = exports.uncompress
