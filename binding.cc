@@ -31,15 +31,13 @@ v8::Handle<v8::Value> CompressWrapper(const v8::Arguments& args) {
   return scope.Close(CreateBuffer(dst));
 }
 
-// Wrapper around the snappy::uncompress
+// Wrapper around the snappy::uncompress method
 // uncompresses a buffer or a string and returns a buffer
 v8::Handle<v8::Value> UncompressWrapper(const v8::Arguments& args) {
   v8::HandleScope scope;
   std::string dst;
-  v8::Handle<v8::Object> buffer = args[0]->ToObject();
-  char* data = node::Buffer::Data(buffer);
-  size_t length = node::Buffer::Length(buffer);
-  snappy::Uncompress(data, length, &dst);
+  v8::String::Utf8Value data(args[0]->ToString());
+  snappy::Uncompress(*data, data.length(), &dst);
   return scope.Close(CreateBuffer(dst));
 }
 
