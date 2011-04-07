@@ -31,6 +31,15 @@ v8::Handle<v8::Value> CompressWrapper(const v8::Arguments& args) {
   return scope.Close(CreateBuffer(dst));
 }
 
+// Wrapper around the snappy::IsValidCompressedBuffer method
+// return true if a buffer or a string is valid compressed
+v8::Handle<v8::Value> IsValidCompressedWrapper(const v8::Arguments& args) {
+  v8::HandleScope scope;
+  v8::String::Utf8Value data(args[0]->ToString());
+  bool valid = snappy::IsValidCompressedBuffer(*data, data.length());
+  return scope.Close(v8::Boolean::New(valid));
+}
+
 // Wrapper around the snappy::uncompress method
 // uncompresses a buffer or a string and returns a buffer
 v8::Handle<v8::Value> UncompressWrapper(const v8::Arguments& args) {
@@ -46,10 +55,13 @@ init(v8::Handle<v8::Object> target) {
   v8::HandleScope scope;
   v8::Local<v8::Function> compress_fun =
     v8::FunctionTemplate::New(CompressWrapper)->GetFunction();
+  v8::Local<v8::Function> isValidCompressed_fun =
+    v8::FunctionTemplate::New(IsValidCompressedWrapper)->GetFunction();
   v8::Local<v8::Function> uncompress_fun =
     v8::FunctionTemplate::New(UncompressWrapper)->GetFunction();
 
   target->Set(v8::String::New("compress"), compress_fun);
+  target->Set(v8::String::New("isValidCompressed"), isValidCompressed_fun);
   target->Set(v8::String::New("uncompress"), uncompress_fun);
 }
 }  // namespace

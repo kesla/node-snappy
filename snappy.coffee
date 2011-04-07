@@ -5,6 +5,8 @@ exports.compress = (input) ->
 		input = JSON.stringify(input)
 	binding.compress(input)
 
+exports.isValidCompressed = binding.isValidCompressed
+
 exports.parsers =
 	json: (buffer) ->
 		return JSON.parse buffer
@@ -16,7 +18,6 @@ exports.parsers =
 		return buffer
 
 exports.uncompress = (compressed, parse = @parsers.raw) ->
-	ret = binding.uncompress(compressed)
-	return parse ret
+	return parse(binding.uncompress(compressed))
 
 exports.decompress = exports.uncompress
