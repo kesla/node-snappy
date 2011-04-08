@@ -1,11 +1,14 @@
 binding = require('./build/default/binding')
 
-exports.compress = (input) ->
+exports.compress = (input, callback) ->
 	unless typeof input is 'string' or Buffer.isBuffer input
 		input = JSON.stringify(input)
-	binding.compress(input)
+	compressed = binding.compress(input)
+	callback false, compressed
 
-exports.isValidCompressed = binding.isValidCompressed
+exports.isValidCompressed = (input, callback) ->
+  valid = binding.isValidCompressed input
+  callback false, valid
 
 exports.parsers =
 	json: (buffer) ->
@@ -17,7 +20,8 @@ exports.parsers =
 	raw: (buffer)->
 		return buffer
 
-exports.uncompress = (compressed, parse = @parsers.raw) ->
-	return parse(binding.uncompress(compressed))
+exports.uncompress = (compressed, callback, parse = @parsers.raw) ->
+  data = parse(binding.uncompress(compressed))
+  callback(false, data)
 
 exports.decompress = exports.uncompress
