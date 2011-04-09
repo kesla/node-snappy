@@ -13,9 +13,11 @@ def configure(conf):
   conf.check_tool('node_addon')
 
 	# Change this to the path where you have installed snappy
-  conf.env.append_value("LIBPATH_SNAPPY", "/home/david/local/snappy/lib")
+  snappy_home = "/home/david/local/snappy"
+
+  conf.env.append_value("LIBPATH_SNAPPY", snappy_home + "/lib")
+  conf.env.append_value("CPPPATH_SNAPPY", snappy_home + "/include")
   conf.env.append_value("LIB_SNAPPY", "snappy")
-  conf.env.append_value("CPPPATH_SNAPPY", "/home/david/local/snappy/include")
 
 def build(bld):
   def cake(tsk):
