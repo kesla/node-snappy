@@ -1,5 +1,5 @@
 import os
-import misc
+import Options
 
 srcdir = '.'
 blddir = 'build'
@@ -7,25 +7,39 @@ VERSION = '0.0.1'
 
 def set_options(opt):
   opt.tool_options('compiler_cxx')
+  
+  opt.add_option( '--includes'
+                , action='store'
+                , default=os.getenv("CPATH")
+                , help='Custom directories containing snappy header files [default: $CPATH]'
+                , dest='includes'
+                )
+
+  opt.add_option( '--libpath'
+                , action='store'
+                , default=os.getenv("LD_LIBRARY_PATH")
+                , help='Custom directories to search for the shared V8 [default: $LD_LIBRARY_PATH]'
+                , dest='libpath'
+                )
 
 def configure(conf):
   conf.check_tool('compiler_cxx')
   conf.check_tool('node_addon')
 
-	# Change this to the path where you have installed snappy
-  snappy_home = "/home/david/local/snappy"
+  for libpath in Options.options.libpath.partition(':'):
+    conf.env.append_value("LIBPATH_SNAPPY", libpath)
 
-  conf.env.append_value("LIBPATH_SNAPPY", snappy_home + "/lib")
-  conf.env.append_value("CPPPATH_SNAPPY", snappy_home + "/include")
+  for includes in Options.options.includes.partition(':'):
+    conf.env.append_value("CPPPATH_SNAPPY", includes)
+
   conf.env.append_value("LIB_SNAPPY", "snappy")
 
 def build(bld):
   def cake(tsk):
     abspath = tsk.generator.path.abspath()
     return tsk.generator.bld.exec_command('cake compile', cwd=abspath)
-
-
   obj = bld.new_task_gen('cxx', 'shlib', 'node_addon')
+
   obj.uselib = "SNAPPY"
   obj.cxxflags     = ['-Wall']
   obj.target = 'binding'
