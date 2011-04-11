@@ -1,22 +1,22 @@
-//Copyright (c) 2011 David Björklund
+// Copyright (c) 2011 David Björklund
 //
-//Permission is hereby granted, free of charge, to any person obtaining a copy
-//of this software and associated documentation files (the "Software"), to deal
-//in the Software without restriction, including without limitation the rights
-//to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-//copies of the Software, and to permit persons to whom the Software is
-//furnished to do so, subject to the following conditions:
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
 //
-//The above copyright notice and this permission notice shall be included in
-//all copies or substantial portions of the Software.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
 //
-//THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-//FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-//OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-//THE SOFTWARE.
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
 
 
 #include <string>
@@ -73,15 +73,8 @@ v8::Handle<v8::Value> UncompressWrapper(const v8::Arguments& args) {
 extern "C" void
 init(v8::Handle<v8::Object> target) {
   v8::HandleScope scope;
-  v8::Local<v8::Function> compress_fun =
-    v8::FunctionTemplate::New(CompressWrapper)->GetFunction();
-  v8::Local<v8::Function> isValidCompressed_fun =
-    v8::FunctionTemplate::New(IsValidCompressedWrapper)->GetFunction();
-  v8::Local<v8::Function> uncompress_fun =
-    v8::FunctionTemplate::New(UncompressWrapper)->GetFunction();
-
-  target->Set(v8::String::New("compress"), compress_fun);
-  target->Set(v8::String::New("isValidCompressed"), isValidCompressed_fun);
-  target->Set(v8::String::New("uncompress"), uncompress_fun);
+  NODE_SET_METHOD(target, "compress", CompressWrapper);
+  NODE_SET_METHOD(target, "uncompress", UncompressWrapper);
+  NODE_SET_METHOD(target, "isValidCompressed", IsValidCompressedWrapper);
 }
 }  // namespace
