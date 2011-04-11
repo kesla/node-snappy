@@ -11,7 +11,6 @@ Snappy is widely used inside Google, in everything from BigTable and MapReduce t
   - <http://code.google.com/p/snappy/>
 - Install coffee-script (<http://jashkenas.github.com/coffee-script/>)
   - npm install coffee-script
-- Edit wscript and change snappy_home to the path were you've installed snappy.
 - Build and install node-snappy
   - node-waf configure install
 
