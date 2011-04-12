@@ -41,40 +41,55 @@ inline v8::Local<v8::Object> CreateBuffer(std::string str) {
   return bufferConstructor->NewInstance(3, constructorArgs);
 }
 
-// Wrapper around the snappy::compress method
-// compresses a buffer or a string and returns a buffer
-v8::Handle<v8::Value> CompressWrapper(const v8::Arguments& args) {
+// Use snappy::Compress method, compress a buffer or a string and use callback
+// with the response
+v8::Handle<v8::Value> DoCompress(const v8::Arguments& args) {
   v8::HandleScope scope;
   std::string dst;
   v8::String::Utf8Value data(args[0]->ToString());
   snappy::Compress(*data, data.length(), &dst);
-  return scope.Close(CreateBuffer(dst));
+  v8::Local<v8::Function> callback = v8::Local<v8::Function>::Cast(args[1]);
+  v8::Local<v8::Value> argv[2];
+  argv[0] = v8::Local<v8::Value>::New(v8::Null());
+  argv[1] = CreateBuffer(dst);
+  callback->Call(v8::Context::GetCurrent()->Global(), 2, argv);
+  return scope.Close(v8::Undefined());
 }
 
-// Wrapper around the snappy::IsValidCompressedBuffer method
+// Use snappy::IsValidCompressedBuffer method and use callback with response.
 // return true if a buffer or a string is valid compressed
-v8::Handle<v8::Value> IsValidCompressedWrapper(const v8::Arguments& args) {
+v8::Handle<v8::Value> DoIsValidCompressed(const v8::Arguments& args) {
   v8::HandleScope scope;
   v8::String::Utf8Value data(args[0]->ToString());
   bool valid = snappy::IsValidCompressedBuffer(*data, data.length());
-  return scope.Close(v8::Boolean::New(valid));
+  v8::Local<v8::Function> callback = v8::Local<v8::Function>::Cast(args[1]);
+  v8::Local<v8::Value> argv[2];
+  argv[0] = v8::Local<v8::Value>::New(v8::Null());
+  argv[1] = v8::Local<v8::Boolean>::New(v8::Boolean::New(valid));
+  callback->Call(v8::Context::GetCurrent()->Global(), 2, argv);
+  return scope.Close(v8::Undefined());
 }
 
-// Wrapper around the snappy::uncompress method
-// uncompresses a buffer or a string and returns a buffer
-v8::Handle<v8::Value> UncompressWrapper(const v8::Arguments& args) {
+// Use snappy::Uncompress method, uncompress a buffer or a string and use
+// callback with the response
+v8::Handle<v8::Value> DoUncompress(const v8::Arguments& args) {
   v8::HandleScope scope;
   std::string dst;
   v8::String::Utf8Value data(args[0]->ToString());
   snappy::Uncompress(*data, data.length(), &dst);
-  return scope.Close(CreateBuffer(dst));
+  v8::Local<v8::Function> callback = v8::Local<v8::Function>::Cast(args[1]);
+  v8::Local<v8::Value> argv[2];
+  argv[0] = v8::Local<v8::Value>::New(v8::Null());
+  argv[1] = CreateBuffer(dst);
+  callback->Call(v8::Context::GetCurrent()->Global(), 2, argv);
+  return scope.Close(v8::Undefined());
 }
 
 extern "C" void
 init(v8::Handle<v8::Object> target) {
   v8::HandleScope scope;
-  NODE_SET_METHOD(target, "compress", CompressWrapper);
-  NODE_SET_METHOD(target, "uncompress", UncompressWrapper);
-  NODE_SET_METHOD(target, "isValidCompressed", IsValidCompressedWrapper);
+  NODE_SET_METHOD(target, "compress", DoCompress);
+  NODE_SET_METHOD(target, "uncompress", DoUncompress);
+  NODE_SET_METHOD(target, "isValidCompressed", DoIsValidCompressed);
 }
 }  // namespace
