@@ -1,5 +1,6 @@
 import os
 import Options
+import Utils
 
 srcdir = '.'
 blddir = 'build'
@@ -35,11 +36,7 @@ def configure(conf):
   conf.env.append_value("LIB_SNAPPY", "snappy")
 
 def build(bld):
-  def cake(tsk):
-    abspath = tsk.generator.path.abspath()
-    return tsk.generator.bld.exec_command('cake compile', cwd=abspath)
   obj = bld.new_task_gen('cxx', 'shlib', 'node_addon')
-
   obj.uselib = "SNAPPY"
   obj.cxxflags     = ['-Wall']
   obj.target = 'binding'
@@ -47,4 +44,7 @@ def build(bld):
   obj.cxxflags     = ['-Wall']
   obj.install_path = None
   
-  bld(rule=cake, always=True, name='call cake')
+  Utils.exec_command('cake compile')
+
+def test(tsk):
+  Utils.exec_command('coffee test.coffee')
