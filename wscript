@@ -27,11 +27,13 @@ def configure(conf):
   conf.check_tool('compiler_cxx')
   conf.check_tool('node_addon')
 
-  for libpath in Options.options.libpath.partition(':'):
-    conf.env.append_value("LIBPATH_SNAPPY", libpath)
+  if isinstance(Options.options.libpath, str):
+    for libpath in Options.options.libpath.partition(':'):
+      conf.env.append_value("LIBPATH_SNAPPY", libpath)
 
-  for includes in Options.options.includes.partition(':'):
-    conf.env.append_value("CPPPATH_SNAPPY", includes)
+  if isinstance(Options.options.includes, str):
+    for includes in Options.options.includes.partition(':'):
+      conf.env.append_value("CPPPATH_SNAPPY", includes)
 
   conf.env.append_value("LIB_SNAPPY", "snappy")
 
@@ -41,10 +43,9 @@ def build(bld):
   obj.cxxflags     = ['-Wall']
   obj.target = 'binding'
   obj.source = 'binding.cc'
-  obj.cxxflags     = ['-Wall']
   obj.install_path = None
   
   Utils.exec_command('cake compile')
 
 def test(tsk):
-  Utils.exec_command('coffee test.coffee')
+  Utils.exec_command('vows test.coffee --spec')
