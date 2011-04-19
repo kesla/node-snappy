@@ -40,7 +40,8 @@ def configure(conf):
 def build(bld):
   obj = bld.new_task_gen('cxx', 'shlib', 'node_addon')
   obj.uselib = "SNAPPY"
-  obj.cxxflags     = ['-Wall']
+  # -D_FILE_OFFSET_BITS and -D_LARGEFILE_SOURCE needed for libeio
+  obj.cxxflags = ['-Wall', '-D_FILE_OFFSET_BITS=64', '-D_LARGEFILE_SOURCE']
   obj.target = 'binding'
   obj.source = 'binding.cc'
   obj.install_path = None
