@@ -32,7 +32,7 @@ buffer = new Buffer(string)
 json = {"foo" : "bar", "fou" : 0, "shou" : "ho ho", "what?" : ["hey", "you"]}
 
 
-for sync in ["", "Sync"]
+["", "Sync"].forEach (sync)->
   title = if sync is "" then "asyncronous" else "synchronous"
   vows.describe("snappy (#{title} versions)").addBatch(
     "A buffer":
