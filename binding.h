@@ -26,51 +26,78 @@
 
 namespace nodesnappy {
 
-// Base class for both compress and uncompress including shared methods
+/*
+ * struct used in the async versions, used to store data.
+ */
+template<class T> struct SnappyRequest {
+  std::string input;
+  T result;
+  v8::Persistent<v8::Function> callback;
+  inline SnappyRequest(const v8::Arguments& args) {
+    v8::String::Utf8Value data(args[0]->ToString());
+    input = std::string(*data, data.length());
+    v8::Local<v8::Function> local = v8::Local<v8::Function>::Cast(args[1]);
+    callback = v8::Persistent<v8::Function>::New(local);
+  }
+};
+
+/*
+ * Base class for both compress and uncompress including shared methods
+ */
 class CompressUncompressBase {
  protected:
   static int After(eio_req *req);
-  static v8::Local<v8::Object> CreateBuffer(const std::string&);
+  /* Call the specifed callback.
+   * Use null as first argument and use the specifed string (converted to a
+   * Buffer) as second argument.*/
+  static void CallCallback(const v8::Handle<v8::Function>&, const std::string&);
 };
 
-// Bindings to the snappy::Compress-method. Includes both asynchronous
-// and synchronous bindings
+/* 
+ * Bindings to the snappy::Compress-method. Includes both asynchronous
+ * and synchronous bindings
+ */
 class CompressBinding : CompressUncompressBase {
  public:
-  // Asynchronous binding
+  /* Asynchronous binding */
   static v8::Handle<v8::Value> Async(const v8::Arguments& args);
-  // Synchronous binding
+  /* Synchronous binding */
   static v8::Handle<v8::Value> Sync(const v8::Arguments& args);
 
  private:
   static int AsyncOperation(eio_req *req);
 };
 
-// Bindings to the snappy::Uncompress-method. Includes both asynchronous
-// and synchronous bindings
+/* 
+ * Bindings to the snappy::Uncompress-method. Includes both asynchronous
+ * and synchronous bindings
+ */
 class UncompressBinding : CompressUncompressBase {
  public:
-  // Asynchronous binding
+  /* Asynchronous binding */
   static v8::Handle<v8::Value> Async(const v8::Arguments& args);
-  // Synchronous binding
+  /* Synchronous binding */
   static v8::Handle<v8::Value> Sync(const v8::Arguments& args);
 
  private:
   static int AsyncOperation(eio_req *req);
 };
 
-// Bindings to the snappy::IsValidCompressedBuffer-method. Includes both
-// asynchronous and synchronous bindings
+/* 
+ * Bindings to the snappy::IsValidCompressedBuffer-method. Includes both
+ * asynchronous and synchronous bindings
+ */
 class IsValidCompressedBinding {
  public:
-  // Asynchronous binding
+  /* Asynchronous binding */
   static v8::Handle<v8::Value> Async(const v8::Arguments& args);
-  // Synchronous binding
+  /* Synchronous binding */
   static v8::Handle<v8::Value> Sync(const v8::Arguments& args);
 
  private:
   static int After(eio_req *req);
   static int AsyncOperation(eio_req *req);
+  static void CallCallback(const v8::Handle<v8::Function>&, const bool);
 };
 
 }  // namespace nodesnappy
