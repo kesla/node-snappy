@@ -30,17 +30,11 @@ namespace nodesnappy {
  * struct used in the async versions, used to store data.
  */
 template<class T> struct SnappyRequest {
+  SnappyRequest(const v8::Arguments&);
   std::string input;
   T result;
   v8::Persistent<v8::Function> callback;
   const std::string* err;
-  inline SnappyRequest(const v8::Arguments& args) {
-    v8::String::Utf8Value data(args[0]->ToString());
-    input = std::string(*data, data.length());
-    v8::Local<v8::Function> local = v8::Local<v8::Function>::Cast(args[1]);
-    callback = v8::Persistent<v8::Function>::New(local);
-    err = NULL;
-  }
 };
 
 /*
@@ -65,9 +59,9 @@ class Base {
   /*
    * Call the specifed callback with err and res as arguments.
    */
-  static void CallCallback(const v8::Handle<v8::Function>& callback,
-                           const v8::Handle<v8::Value>& err,
-                           const v8::Handle<v8::Value>& res);
+  static void CallCallback(const v8::Handle<v8::Function>&,
+                           const v8::Handle<v8::Value>&,
+                           const v8::Handle<v8::Value>&);
 };
 
 /*
@@ -76,7 +70,7 @@ class Base {
 class CompressUncompressBase : protected Base {
  protected:
   /* Method run after the async operation */
-  static int After(eio_req *req);
+  static int After(eio_req*);
   /* 
    * Call the specifed callback when everything has gone well.
    * Use null as first argument and use the specifed string (converted to a
@@ -93,13 +87,13 @@ class CompressUncompressBase : protected Base {
 class CompressBinding : CompressUncompressBase {
  public:
   /* Asynchronous binding */
-  static v8::Handle<v8::Value> Async(const v8::Arguments& args);
+  static v8::Handle<v8::Value> Async(const v8::Arguments&);
   /* Synchronous binding */
-  static v8::Handle<v8::Value> Sync(const v8::Arguments& args);
+  static v8::Handle<v8::Value> Sync(const v8::Arguments&);
 
  private:
 
-  static int AsyncOperation(eio_req *req);
+  static int AsyncOperation(eio_req*);
 };
 
 /* 
@@ -109,28 +103,28 @@ class CompressBinding : CompressUncompressBase {
 class UncompressBinding : CompressUncompressBase {
  public:
   /* Asynchronous binding */
-  static v8::Handle<v8::Value> Async(const v8::Arguments& args);
+  static v8::Handle<v8::Value> Async(const v8::Arguments&);
   /* Synchronous binding */
-  static v8::Handle<v8::Value> Sync(const v8::Arguments& args);
+  static v8::Handle<v8::Value> Sync(const v8::Arguments&);
 
  private:
-  static int AsyncOperation(eio_req *req);
+  static int AsyncOperation(eio_req*);
 };
 
 /* 
  * Bindings to the snappy::IsValidCompressedBuffer-method. Includes both
  * asynchronous and synchronous bindings
  */
-class IsValidCompressedBinding {
+class IsValidCompressedBinding : protected Base {
  public:
   /* Asynchronous binding */
-  static v8::Handle<v8::Value> Async(const v8::Arguments& args);
+  static v8::Handle<v8::Value> Async(const v8::Arguments&);
   /* Synchronous binding */
-  static v8::Handle<v8::Value> Sync(const v8::Arguments& args);
+  static v8::Handle<v8::Value> Sync(const v8::Arguments&);
 
  private:
-  static int After(eio_req *req);
-  static int AsyncOperation(eio_req *req);
+  static int After(eio_req*);
+  static int AsyncOperation(eio_req*);
   /* 
    * Call the specifed callback when everything has gone well.
    * Use null as first argument and use the specifed bool (converted to a

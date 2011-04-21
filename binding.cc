@@ -26,6 +26,13 @@
 #include <string.h>  // memcpy
 
 namespace nodesnappy {
+  template<class T> SnappyRequest<T>::SnappyRequest(const v8::Arguments& args){
+    v8::String::Utf8Value data(args[0]->ToString());
+    input = std::string(*data, data.length());
+    v8::Local<v8::Function> local = v8::Local<v8::Function>::Cast(args[1]);
+    callback = v8::Persistent<v8::Function>::New(local);
+    err = NULL;
+  }
 
 const std::string SnappyErrors::kInvalidInput = "Invalid input";
 
@@ -50,17 +57,17 @@ inline void Base::CallErrCallback(const v8::Handle<v8::Function>& callback,
 // PROTECTED
 int CompressUncompressBase::After(eio_req *req) {
   v8::HandleScope scope;
-  SnappyRequest<std::string>* snappy_request =
+  SnappyRequest<std::string>* snappy_req =
     static_cast<SnappyRequest<std::string>*>(req->data);
-  if (snappy_request->err != NULL) {
-    CallErrCallback(snappy_request->callback, *snappy_request->err);
+  if (snappy_req->err != NULL) {
+    CallErrCallback(snappy_req->callback, *snappy_req->err);
   } else {
-    CallOkCallback(snappy_request->callback, snappy_request->result);
+    CallOkCallback(snappy_req->callback, snappy_req->result);
   }
 
   ev_unref(EV_DEFAULT_UC);
-  snappy_request->callback.Dispose();
-  delete snappy_request;
+  snappy_req->callback.Dispose();
+  delete snappy_req;
   return 0;
 }
 
@@ -77,9 +84,8 @@ CompressUncompressBase::CallOkCallback(const v8::Handle<v8::Function>& callback,
 // PUBLIC
 v8::Handle<v8::Value> CompressBinding::Async(const v8::Arguments& args) {
   v8::HandleScope scope;
-  SnappyRequest<std::string>* snappy_request =
-    new SnappyRequest<std::string>(args);
-  eio_custom(AsyncOperation, EIO_PRI_DEFAULT, After, snappy_request);
+  SnappyRequest<std::string>* snappy_req = new SnappyRequest<std::string>(args);
+  eio_custom(AsyncOperation, EIO_PRI_DEFAULT, After, snappy_req);
   ev_ref(EV_DEFAULT_UC);
   return v8::Undefined();
 }
@@ -95,12 +101,12 @@ v8::Handle<v8::Value> CompressBinding::Sync(const v8::Arguments& args) {
 
 // PRIVATE
 int CompressBinding::AsyncOperation(eio_req *req) {
-  SnappyRequest<std::string>* snappy_request =
+  SnappyRequest<std::string>* snappy_req =
     static_cast<SnappyRequest<std::string>*>(req->data);
   std::string dst;
-  std::string* input = &snappy_request->input;
+  std::string* input = &snappy_req->input;
   snappy::Compress(input->data(), input->length(), &dst);
-  snappy_request->result = dst;
+  snappy_req->result = dst;
   return 0;
 }
 
@@ -108,9 +114,8 @@ int CompressBinding::AsyncOperation(eio_req *req) {
 // PUBLIC
 v8::Handle<v8::Value> UncompressBinding::Async(const v8::Arguments& args) {
   v8::HandleScope scope;
-  SnappyRequest<std::string>* snappy_request =
-    new SnappyRequest<std::string>(args);
-  eio_custom(AsyncOperation, EIO_PRI_DEFAULT, After, snappy_request);
+  SnappyRequest<std::string>* snappy_req = new SnappyRequest<std::string>(args);
+  eio_custom(AsyncOperation, EIO_PRI_DEFAULT, After, snappy_req);
   ev_ref(EV_DEFAULT_UC);
   return v8::Undefined();
 }
@@ -119,27 +124,25 @@ v8::Handle<v8::Value> UncompressBinding::Sync(const v8::Arguments& args) {
   v8::HandleScope scope;
   std::string dst;
   v8::String::Utf8Value data(args[0]->ToString());
-  bool ok = snappy::Uncompress(*data, data.length(), &dst);
-  if (ok) {
-    CallOkCallback(v8::Local<v8::Function>::Cast(args[1]), dst);
+  v8::Handle<v8::Function> callback = v8::Local<v8::Function>::Cast(args[1]);
+  if (snappy::Uncompress(*data, data.length(), &dst)) {
+    CallOkCallback(callback, dst);
   } else {
-    CallErrCallback(v8::Local<v8::Function>::Cast(args[1]),
-                    SnappyErrors::kInvalidInput);
+    CallErrCallback(callback, SnappyErrors::kInvalidInput);
   }
   return scope.Close(v8::Undefined());
 }
 
 // PRIVATE
 int UncompressBinding::AsyncOperation(eio_req *req) {
-  SnappyRequest<std::string>* snappy_request =
+  SnappyRequest<std::string>* snappy_req =
     static_cast<SnappyRequest<std::string>*>(req->data);
   std::string dst;
-  std::string* input = &snappy_request->input;
-  bool ok = snappy::Uncompress(input->data(), input->length(), &dst);
-  if (ok) {
-    snappy_request->result = dst;
+  std::string* input = &snappy_req->input;
+  if (snappy::Uncompress(input->data(), input->length(), &dst)) {
+    snappy_req->result = dst;
   } else {
-    snappy_request->err = &SnappyErrors::kInvalidInput;
+    snappy_req->err = &SnappyErrors::kInvalidInput;
   }
   return 0;
 }
@@ -151,8 +154,8 @@ IsValidCompressedBinding::Async(const v8::Arguments& args) {
   v8::HandleScope scope;
   std::string dst;
   v8::String::Utf8Value data(args[0]->ToString());
-  SnappyRequest<bool>* snappy_request = new SnappyRequest<bool>(args);
-  eio_custom(AsyncOperation, EIO_PRI_DEFAULT, After, snappy_request);
+  SnappyRequest<bool>* snappy_req = new SnappyRequest<bool>(args);
+  eio_custom(AsyncOperation, EIO_PRI_DEFAULT, After, snappy_req);
   ev_ref(EV_DEFAULT_UC);
   return v8::Undefined();
 }
@@ -170,19 +173,19 @@ IsValidCompressedBinding::Sync(const v8::Arguments& args) {
 // PRIVATE
 int IsValidCompressedBinding::After(eio_req *req) {
   v8::HandleScope scope;
-  SnappyRequest<bool>* snappy_request =
+  SnappyRequest<bool>* snappy_req =
     static_cast<SnappyRequest<bool>*>(req->data);
-  CallOkCallback(snappy_request->callback, snappy_request->result);
+  CallOkCallback(snappy_req->callback, snappy_req->result);
   ev_unref(EV_DEFAULT_UC);
-  snappy_request->callback.Dispose();
-  delete snappy_request;
+  snappy_req->callback.Dispose();
+  delete snappy_req;
   return 0;
 }
 
 int IsValidCompressedBinding::AsyncOperation(eio_req *req) {
-  SnappyRequest<bool>* snappy_request = (SnappyRequest<bool>*) req->data;
-  std::string* input = &snappy_request->input;
-  snappy_request->result =
+  SnappyRequest<bool>* snappy_req = (SnappyRequest<bool>*) req->data;
+  std::string* input = &snappy_req->input;
+  snappy_req->result =
     snappy::IsValidCompressedBuffer(input->data(), input->length());
   return 0;
 }
@@ -191,9 +194,9 @@ inline void
 IsValidCompressedBinding::CallOkCallback(
     const v8::Handle<v8::Function>& callback,
     const bool data) {
-  v8::Handle<v8::Value> argv[2] = {v8::Local<v8::Value>::New(v8::Null()),
-                             v8::Local<v8::Value>::New(v8::Boolean::New(data))};
-  callback->Call(v8::Context::GetCurrent()->Global(), 2, argv);
+  v8::Local<v8::Value> err = v8::Local<v8::Value>::New(v8::Null());
+  v8::Local<v8::Value> res = v8::Local<v8::Value>::New(v8::Boolean::New(data));
+  CallCallback(callback, err, res);
 }
 
 extern "C" void
