@@ -33,24 +33,57 @@ template<class T> struct SnappyRequest {
   std::string input;
   T result;
   v8::Persistent<v8::Function> callback;
+  const std::string* err;
   inline SnappyRequest(const v8::Arguments& args) {
     v8::String::Utf8Value data(args[0]->ToString());
     input = std::string(*data, data.length());
     v8::Local<v8::Function> local = v8::Local<v8::Function>::Cast(args[1]);
     callback = v8::Persistent<v8::Function>::New(local);
+    err = NULL;
   }
+};
+
+/*
+ * Error messages.
+ */
+struct SnappyErrors {
+  static const std::string kInvalidInput;
+};
+
+/*
+ * Base class for all bindings.
+ */
+class Base {
+ protected:
+  /*
+   * Calls the specifed callback when something has gone wrong.
+   * Converts the specifed string to an Error as first argument and use null as
+   * the second argument.
+   */
+  static void CallErrCallback(const v8::Handle<v8::Function>&,
+                              const std::string&);
+  /*
+   * Call the specifed callback with err and res as arguments.
+   */
+  static void CallCallback(const v8::Handle<v8::Function>& callback,
+                           const v8::Handle<v8::Value>& err,
+                           const v8::Handle<v8::Value>& res);
 };
 
 /*
  * Base class for both compress and uncompress including shared methods
  */
-class CompressUncompressBase {
+class CompressUncompressBase : protected Base {
  protected:
+  /* Method run after the async operation */
   static int After(eio_req *req);
-  /* Call the specifed callback.
+  /* 
+   * Call the specifed callback when everything has gone well.
    * Use null as first argument and use the specifed string (converted to a
-   * Buffer) as second argument.*/
-  static void CallCallback(const v8::Handle<v8::Function>&, const std::string&);
+   * Buffer) as second argument.
+   */
+  static void CallOkCallback(const v8::Handle<v8::Function>&,
+                             const std::string&);
 };
 
 /* 
@@ -65,6 +98,7 @@ class CompressBinding : CompressUncompressBase {
   static v8::Handle<v8::Value> Sync(const v8::Arguments& args);
 
  private:
+
   static int AsyncOperation(eio_req *req);
 };
 
@@ -97,7 +131,12 @@ class IsValidCompressedBinding {
  private:
   static int After(eio_req *req);
   static int AsyncOperation(eio_req *req);
-  static void CallCallback(const v8::Handle<v8::Function>&, const bool);
+  /* 
+   * Call the specifed callback when everything has gone well.
+   * Use null as first argument and use the specifed bool (converted to a
+   * Boolean) as second argument.
+   */
+  static void CallOkCallback(const v8::Handle<v8::Function>&, const bool);
 };
 
 }  // namespace nodesnappy

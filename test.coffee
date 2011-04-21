@@ -24,9 +24,11 @@ vows = require 'vows'
 assert = require 'assert'
 snappy = require './snappy'
 
-assert.isBuffer = (buf)->
+assert.isBuffer = (buf) ->
   assert.instanceOf buf, Buffer
 
+assert.isError = (err) ->
+  assert.instanceOf err, Error
 string = "foo foo foo  Fasfa daos asd foo foo foo asdasf bar bar aarr"
 buffer = new Buffer(string)
 json = {"foo" : "bar", "fou" : 0, "shou" : "ho ho", "what?" : ["hey", "you"]}
@@ -35,8 +37,8 @@ json = {"foo" : "bar", "fou" : 0, "shou" : "ho ho", "what?" : ["hey", "you"]}
 ["", "Sync"].forEach (sync)->
   title = if sync is "" then "asyncronous" else "synchronous"
   vows.describe("snappy (#{title} versions)").addBatch(
-    "A buffer":
-      "compressed":
+    "compress":
+      "Buffer":
         topic: () -> snappy["compress#{sync}"](buffer, @callback)
         'should not have errors': (err, compressed) ->
           assert.isNull err
@@ -44,7 +46,7 @@ json = {"foo" : "bar", "fou" : 0, "shou" : "ho ho", "what?" : ["hey", "you"]}
         'should result in a buffer': (err, compressed) ->
           assert.isBuffer compressed
 
-        'and tested if valid':
+        'and isValidCompressed':
           topic: (compressed) -> snappy["isValidCompressed#{sync}"](compressed, @callback)
           'should not have errors': (err, result) ->
             assert.isNull err
@@ -52,7 +54,7 @@ json = {"foo" : "bar", "fou" : 0, "shou" : "ho ho", "what?" : ["hey", "you"]}
           'should result in true': (err, result) ->
             assert.isTrue result
 
-        'and decompressed with string-parser':
+        'and decompress (string-parser)':
           topic: (compressed) -> snappy["decompress#{sync}"](compressed, @callback, snappy.parsers.string)
           'should not have errors': (err, result) ->
             assert.isNull err
@@ -63,7 +65,7 @@ json = {"foo" : "bar", "fou" : 0, "shou" : "ho ho", "what?" : ["hey", "you"]}
           'should equal the original when parsed': (err, result) ->
             assert.strictEqual result, buffer.toString("utf8")
 
-        'and decompressed without any parser':
+        'and decompress (no parser)':
           topic: (compressed) -> snappy["decompress#{sync}"](compressed, @callback)
           'should not have errors': (err, result) ->
             assert.isNull err
@@ -74,8 +76,7 @@ json = {"foo" : "bar", "fou" : 0, "shou" : "ho ho", "what?" : ["hey", "you"]}
           'should equal the original': (err, result) ->
             assert.strictEqual result.toString("utf8"), buffer.toString("utf8")
 
-    "A json-object":
-      "compressed":
+      "json":
         topic: () -> snappy["compress#{sync}"](json, @callback)
         'should not have errors': (err, compressed) ->
           assert.isNull err
@@ -83,7 +84,7 @@ json = {"foo" : "bar", "fou" : 0, "shou" : "ho ho", "what?" : ["hey", "you"]}
         'should result in a buffer': (err, compressed) ->
           assert.isBuffer compressed
 
-        'and tested if valid':
+        'and isValidCompressed':
           topic: (compressed) -> snappy["isValidCompressed#{sync}"](compressed, @callback)
           'should not have errors': (err, result) ->
             assert.isNull err
@@ -91,7 +92,7 @@ json = {"foo" : "bar", "fou" : 0, "shou" : "ho ho", "what?" : ["hey", "you"]}
           'should result in true': (err, result) ->
             assert.isTrue result
 
-        'and decompressed with json-parser':
+        'and decompress (json-parser)':
           topic: (compressed) -> snappy["decompress#{sync}"](compressed, @callback, snappy.parsers.json)
           'should not have errors': (err, result) ->
             assert.isNull err
@@ -103,7 +104,7 @@ json = {"foo" : "bar", "fou" : 0, "shou" : "ho ho", "what?" : ["hey", "you"]}
           'should equal the original': (err, result) ->
             assert.deepEqual result, json
 
-        'and decompressed with string-parser':
+        'and decompress (string-parser)':
           topic: (compressed) -> snappy["decompress#{sync}"](compressed, @callback, snappy.parsers.string)
           'should not have errors': (err, result) ->
             assert.isNull err
@@ -114,7 +115,7 @@ json = {"foo" : "bar", "fou" : 0, "shou" : "ho ho", "what?" : ["hey", "you"]}
           'should equal the original when parsed': (err, result) ->
             assert.deepEqual JSON.parse(result), json
 
-        'and decompressed without any parser':
+        'and decompress (no parser)':
           topic: (compressed) -> snappy["decompress#{sync}"](compressed, @callback)
           'should not have errors': (err, result) ->
             assert.isNull err
@@ -125,8 +126,7 @@ json = {"foo" : "bar", "fou" : 0, "shou" : "ho ho", "what?" : ["hey", "you"]}
           'should equal the original when parsed': (err, result) ->
             assert.deepEqual JSON.parse(result), json
 
-    "A string":
-      "compressed":
+      "string":
         topic: () -> snappy["compress#{sync}"](string, @callback)
         'should not have errors': (err, compressed) ->
           assert.isNull err
@@ -134,7 +134,7 @@ json = {"foo" : "bar", "fou" : 0, "shou" : "ho ho", "what?" : ["hey", "you"]}
         'should result in a buffer': (err, compressed) ->
           assert.isBuffer compressed
 
-        'and tested if valid':
+        'and isValidCompressed':
           topic: (compressed) -> snappy["isValidCompressed#{sync}"](compressed, @callback)
           'should not have errors': (err, result) ->
             assert.isNull err
@@ -142,7 +142,7 @@ json = {"foo" : "bar", "fou" : 0, "shou" : "ho ho", "what?" : ["hey", "you"]}
           'should result in true': (err, result) ->
             assert.isTrue result
 
-        'and decompressed with string-parser':
+        'and decompress (string-parser)':
           topic: (compressed) -> snappy["decompress#{sync}"](compressed, @callback, snappy.parsers.string)
           'should not have errors': (err, result) ->
             assert.isNull err
@@ -153,16 +153,34 @@ json = {"foo" : "bar", "fou" : 0, "shou" : "ho ho", "what?" : ["hey", "you"]}
           'should equal the original': (err, result) ->
             assert.strictEqual result, string
 
-        'and decompressed without any parser':
+        'and decompress (no parser)':
           topic: (compressed) -> snappy["decompress#{sync}"](compressed, @callback)
           'should not have errors': (err, result) ->
             assert.isNull err
           
-          'should result in a buffer': (err, result) ->
+          'should result in a Buffer': (err, result) ->
             assert.isBuffer result
 
           'should equal the original when parsed': (err, result) ->
             string2 = result.toString("utf8")
             assert.strictEqual string2, string
 
+    "uncompress":
+      "buffer (invalid)":
+        topic: () -> snappy["decompress#{sync}"](buffer, @callback, snappy.parsers.string)
+        'should have error': (err, result) ->
+          assert.isError err
+        
+        'should have "Invalid input"-error': (err, result) ->
+          assert.strictEqual err.message ,"Invalid input"
+
+    "isValidCompressed":
+      "buffer (invalid)":
+        topic: () -> snappy["isValidCompressed#{sync}"](buffer, @callback)
+        'should not have errors': (err, result) ->
+          assert.isNull err
+
+        'should result in false': (err, result) ->
+          assert.isFalse result
+      
   ).export(module)

@@ -52,12 +52,14 @@ exports.isValidCompressedSync = (input, callback) ->
 # de-/uncompress
 exports.uncompress = (compressed, callback, parse = @parsers.raw) ->
   binding.uncompress(compressed, (err, data) ->
-    callback(err, parse(data))
+    data = parse(data) if data?
+    callback(err, data)
   )
 exports.decompress = exports.uncompress
 
 exports.uncompressSync = (compressed, callback, parse = @parsers.raw) ->
   binding.uncompressSync(compressed, (err, data) ->
-    callback(err, parse(data))
+    data = parse(data) if data?
+    callback(err, data)
   )
 exports.decompressSync = exports.uncompressSync
