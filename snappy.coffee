@@ -23,7 +23,7 @@
 binding = require('./build/default/binding')
 
 # Parsers
-exports.parsers =
+exports.parsers = parsers =
   json: (buffer) ->
     return JSON.parse buffer
   string: (buffer) ->
@@ -50,14 +50,14 @@ exports.isValidCompressedSync = (input, callback) ->
   binding.isValidCompressedSync(input, callback)
 
 # de-/uncompress
-exports.uncompress = (compressed, callback, parse = @parsers.raw) ->
+exports.uncompress = (compressed, callback, parse = parsers.raw) ->
   binding.uncompress(compressed, (err, data) ->
     data = parse(data) if data?
     callback(err, data)
   )
 exports.decompress = exports.uncompress
 
-exports.uncompressSync = (compressed, callback, parse = @parsers.raw) ->
+exports.uncompressSync = (compressed, callback, parse = parsers.raw) ->
   binding.uncompressSync(compressed, (err, data) ->
     data = parse(data) if data?
     callback(err, data)
