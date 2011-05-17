@@ -9,10 +9,8 @@ Snappy is widely used inside Google, in everything from BigTable and MapReduce t
 # Installation
 - Grab the latest Snappy build and install it on your system:
   - <http://code.google.com/p/snappy/>
-- Install coffee-script (<http://jashkenas.github.com/coffee-script/>)
-  - npm install coffee-script
-- Build and install node-snappy
-  - node-waf configure install
+- "npm install snappy"
+- Profit!
 
 # Examples
 ## String
@@ -34,6 +32,10 @@ Snappy is widely used inside Google, in everything from BigTable and MapReduce t
         console.log(result["foo"]);
       }
     }
+
+# Version history
+- v1.0.0
+  - First version!
 
 For more examples of the api, see test.coffee
 
