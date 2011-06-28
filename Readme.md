@@ -1,6 +1,6 @@
 # About
 
-Node module/wrapper for Google's fast compressor/decompressor: <hhttp://code.google.com/p/snappy/>
+Node module/wrapper for Google's fast compressor/decompressor: <http://code.google.com/p/snappy/>
 
 Snappy is a compression/decompression library. It does not aim for maximum compression, or compatibility with any other compression library; instead, it aims for very high speeds and reasonable compression. For instance, compared to the fastest mode of zlib, Snappy is an order of magnitude faster for most inputs, but the resulting compressed files are anywhere from 20% to 100% bigger. On a single core of a Core i7 processor in 64-bit mode, Snappy compresses at about 250 MB/sec or more and decompresses at about 500 MB/sec or more.
 
@@ -33,11 +33,11 @@ Snappy is widely used inside Google, in everything from BigTable and MapReduce t
       }
     }
 
+For more examples of the api, see test.coffee
+
 # Version history
 - v1.0.0
   - First version!
-
-For more examples of the api, see test.coffee
 
 # License
 Copyright (c) 2011 David Björklund
