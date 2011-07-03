@@ -1,4 +1,9 @@
-deps/*
 build/*
 .lock-wscript
 /snappy.js
+/lib/config.h
+/lib/config.log
+/lib/config.status
+/lib/libtool
+/lib/Makefile
+/lib/stamp-h1
