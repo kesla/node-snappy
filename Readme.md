@@ -7,10 +7,7 @@ Snappy is a compression/decompression library. It does not aim for maximum compr
 Snappy is widely used inside Google, in everything from BigTable and MapReduce to our internal RPC systems. (Snappy has previously been referred to as “Zippy” in some presentations and the likes.)
 
 # Installation
-- Grab the latest Snappy build and install it on your system:
-  - <http://code.google.com/p/snappy/>
 - "npm install snappy"
-- Profit!
 
 # Examples
 ## String
@@ -36,6 +33,10 @@ Snappy is widely used inside Google, in everything from BigTable and MapReduce t
 For more examples of the api, see test.coffee
 
 # Version history
+
+- v1.1.0
+  - Include snappy-library in the module (needed for nodester etc)
+
 - v1.0.0
   - First version!
 
