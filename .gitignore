@@ -1,8 +1,11 @@
 build/*
 .lock-wscript
-/lib/config.h
-/lib/config.log
-/lib/config.status
-/lib/libtool
-/lib/Makefile
-/lib/stamp-h1
+/deps/libsnappy/config.h
+/deps/libsnappy/config.log
+/deps/libsnappy/config.status
+/deps/libsnappy/libtool
+/deps/libsnappy/Makefile
+/deps/libsnappy/stamp-h1
+/deps/libsnappy/.deps/*
+node_modules/*
+/npm-debug.log
