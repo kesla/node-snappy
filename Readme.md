@@ -34,6 +34,10 @@ For more examples of the api, see test.coffee
 
 # Version history
 
+- v1.1.1
+  - Remove coffeescript and have files as plain javascript.
+  - Refactor folder stucture.
+
 - v1.1.0
   - Include snappy-library in the module (needed for nodester etc)
 
