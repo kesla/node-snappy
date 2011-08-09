@@ -24,7 +24,5 @@ def build(bld):
   obj.includes = 'lib/'
   obj.install_path = None
   
-  Utils.exec_command('cake compile')
-
 def test(tsk):
-  Utils.exec_command('vows test.coffee --spec')
+  Utils.exec_command('vows test.js --spec')

@@ -13,14 +13,12 @@
     "lib": "."
   },
   "scripts": {
-    "test": "vows test.coffee --spec"
+    "test": "vows test.js --spec"
   },
   "engines": {
     "node": ">= 0.4.5"
   },
-  "dependencies": {
-    "coffee-script": ">= 1.1.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "vows": ">= 0.5.8"
   }
