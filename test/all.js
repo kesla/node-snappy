@@ -24,17 +24,14 @@ var snappy = require('../lib/snappy');
 var vows = require('vows');
 var assert = require('assert');
 
-// Convenient helper methods
-assert.isBuffer = function(buf) {
-  return assert.instanceOf(buf, Buffer);
-};
+// Convenient helper method
 assert.isError = function(err) {
   return assert.instanceOf(err, Error);
 };
 
 // Test data
 var string = "foo foo foo  Fasfa daos asd foo foo foo asdasf bar bar aarr";
-var buffer = new Buffer(string);
+var buffer = new Buffer([255, 200, 100, 3, 0, 256, 80]);
 var json = {
   "foo": "bar",
   "fou": 0,
@@ -67,7 +64,7 @@ var json = {
           return assert.isNull(err);
         },
         'should result in a buffer': function(err, compressed) {
-          return assert.isBuffer(compressed);
+          return Buffer.isBuffer(compressed);
         },
         'and isValidCompressed': {
           topic: function(compressed) {
@@ -91,7 +88,6 @@ var json = {
             return assert.isString(result);
           },
           'should equal the original when parsed': function(err, result) {
-            console.log("'", result, " ", buffer.toString("utf8"), "'");
             return assert.strictEqual(result, buffer.toString("utf8"));
           }
         },
@@ -103,7 +99,7 @@ var json = {
             return assert.isNull(err);
           },
           'should result in a buffer': function(err, result) {
-            return assert.isBuffer(result);
+            return Buffer.isBuffer(result);
           },
           'should equal the original': function(err, result) {
             return assert.strictEqual(result.toString("utf8"), buffer.toString("utf8"));
@@ -118,7 +114,7 @@ var json = {
           return assert.isNull(err);
         },
         'should result in a buffer': function(err, compressed) {
-          return assert.isBuffer(compressed);
+          return Buffer.isBuffer(compressed);
         },
         'and isValidCompressed': {
           topic: function(compressed) {
@@ -167,7 +163,7 @@ var json = {
             return assert.isNull(err);
           },
           'should result in a buffer': function(err, result) {
-            return assert.isBuffer(result);
+            return Buffer.isBuffer(result);
           },
           'should equal the original when parsed': function(err, result) {
             return assert.deepEqual(JSON.parse(result), json);
@@ -182,7 +178,7 @@ var json = {
           return assert.isNull(err);
         },
         'should result in a buffer': function(err, compressed) {
-          return assert.isBuffer(compressed);
+          return Buffer.isBuffer(compressed);
         },
         'and isValidCompressed': {
           topic: function(compressed) {
@@ -217,7 +213,7 @@ var json = {
             return assert.isNull(err);
           },
           'should result in a Buffer': function(err, result) {
-            return assert.isBuffer(result);
+            return Buffer.isBuffer(result);
           },
           'should equal the original when parsed': function(err, result) {
             var string2;

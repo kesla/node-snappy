@@ -25,10 +25,14 @@
 
 #include <string.h>  // memcpy
 
+#include <string>
+
 namespace nodesnappy {
   template<class T> SnappyRequest<T>::SnappyRequest(const v8::Arguments& args){
-    v8::String::Utf8Value data(args[0]->ToString());
-    input = std::string(*data, data.length());
+    v8::Local<v8::Object> object = args[0]->ToObject();
+    size_t length = node::Buffer::Length(object);
+    const char *data = node::Buffer::Data(object);
+    input = std::string(data, length);
     v8::Local<v8::Function> local = v8::Local<v8::Function>::Cast(args[1]);
     callback = v8::Persistent<v8::Function>::New(local);
     err = NULL;
@@ -75,9 +79,9 @@ inline void
 CompressUncompressBase::CallOkCallback(const v8::Handle<v8::Function>& callback,
                                        const std::string& str) {
   v8::Handle<v8::Value> err = v8::Local<v8::Value>::New(v8::Null());
-  v8::Handle<v8::Value> res =
-                   node::Buffer::New(v8::String::New(str.data(), str.length()));
-  CallCallback(callback, err, res);
+  node::Buffer* res = node::Buffer::New(str.length());
+  memcpy(node::Buffer::Data(res), str.c_str(), str.length());
+  CallCallback(callback, err, res->handle_);
 }
 
 // CompressBinding
@@ -92,9 +96,11 @@ v8::Handle<v8::Value> CompressBinding::Async(const v8::Arguments& args) {
 
 v8::Handle<v8::Value> CompressBinding::Sync(const v8::Arguments& args) {
   v8::HandleScope scope;
-  v8::String::Utf8Value data(args[0]->ToString());
+  v8::Local<v8::Object> input = args[0]->ToObject();
+  size_t length = node::Buffer::Length(input);
+  char *data = node::Buffer::Data(input);
   std::string dst;
-  snappy::Compress(*data, data.length(), &dst);
+  snappy::Compress(data, length, &dst);
   CallOkCallback(v8::Local<v8::Function>::Cast(args[1]), dst);
   return scope.Close(v8::Undefined());
 }
@@ -123,9 +129,11 @@ v8::Handle<v8::Value> UncompressBinding::Async(const v8::Arguments& args) {
 v8::Handle<v8::Value> UncompressBinding::Sync(const v8::Arguments& args) {
   v8::HandleScope scope;
   std::string dst;
-  v8::String::Utf8Value data(args[0]->ToString());
+  v8::Local<v8::Object> input = args[0]->ToObject();
+  size_t length = node::Buffer::Length(input);
+  char *data = node::Buffer::Data(input);
   v8::Handle<v8::Function> callback = v8::Local<v8::Function>::Cast(args[1]);
-  if (snappy::Uncompress(*data, data.length(), &dst)) {
+  if (snappy::Uncompress(data, length, &dst)) {
     CallOkCallback(callback, dst);
   } else {
     CallErrCallback(callback, SnappyErrors::kInvalidInput);
@@ -164,8 +172,10 @@ v8::Handle<v8::Value>
 IsValidCompressedBinding::Sync(const v8::Arguments& args) {
   v8::HandleScope scope;
   std::string dst;
-  v8::String::Utf8Value data(args[0]->ToString());
-  bool valid = snappy::IsValidCompressedBuffer(*data, data.length());
+  v8::Local<v8::Object> input = args[0]->ToObject();
+  size_t length = node::Buffer::Length(input);
+  char *data = node::Buffer::Data(input);
+  bool valid = snappy::IsValidCompressedBuffer(data, length);
   CallOkCallback(v8::Local<v8::Function>::Cast(args[1]), valid);
   return scope.Close(v8::Undefined());
 }
