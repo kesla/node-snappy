@@ -1,4 +1,6 @@
-# About
+# Node-snappy [![Build Status](https://secure.travis-ci.org/kesla/node-snappy.png)](http://travis-ci.org/kesla/node-snappy)
+
+## About
 
 Node module/wrapper for Google's fast compressor/decompressor: <http://code.google.com/p/snappy/>
 
@@ -6,43 +8,28 @@ Snappy is a compression/decompression library. It does not aim for maximum compr
 
 Snappy is widely used inside Google, in everything from BigTable and MapReduce to our internal RPC systems. (Snappy has previously been referred to as “Zippy” in some presentations and the likes.)
 
-# Installation
+## Installation
 - "npm install snappy"
 
-# Examples
-## String
+## Examples
+### String
     snappy = require('./snappy');
     // Use synchronous version
-    snappy.compressSync('string to compress', function(err, compressed){
-      // result will be string instead of Buffer
-      snappy.decompress(compressed, snappy.parsers.string, function(err, result){
-        console.log(result);
-      }
+    var compressed= snappy.compressSync('string to compress');
+    snappy.decompressSync(compressed, snappy.parsers.string);
+    // result will be string instead of Buffer
+      console.log(result);
     }
 
-## JSON
+### JSON
     snappy = require('./snappy');
     // Snappy automatically convert json to a string
     snappy.compress({"foo": "bar"}, function(err, compressed){
-      // result will be json instead of Buffer
       snappy.decompress(compressed, snappy.parsers.json, function(err, result){
+      // result will be json instead of Buffer
         console.log(result["foo"]);
       }
     }
-
-For more examples of the api, see test.coffee
-
-# Version history
-
-- v1.1.1
-  - Remove coffeescript and have files as plain javascript.
-  - Refactor folder stucture.
-
-- v1.1.0
-  - Include snappy-library in the module (needed for nodester etc)
-
-- v1.0.0
-  - First version!
 
 # License
 Copyright (c) 2011 David Björklund
