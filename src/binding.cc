@@ -59,7 +59,7 @@ inline void Base::CallErrCallback(const v8::Handle<v8::Function>& callback,
 
 // CompressUncompressBase
 // PROTECTED
-async_rtn CompressUncompressBase::After(eio_req *req) {
+async_rtn CompressUncompressBase::After(uv_work_t *req) {
   v8::HandleScope scope;
   SnappyRequest<std::string>* snappy_req =
     static_cast<SnappyRequest<std::string>*>(req->data);
@@ -105,7 +105,7 @@ v8::Handle<v8::Value> CompressBinding::Sync(const v8::Arguments& args) {
 }
 
 // PRIVATE
-async_rtn CompressBinding::AsyncOperation(eio_req *req) {
+async_rtn CompressBinding::AsyncOperation(uv_work_t *req) {
   SnappyRequest<std::string>* snappy_req =
     static_cast<SnappyRequest<std::string>*>(req->data);
   std::string dst;
@@ -140,7 +140,7 @@ v8::Handle<v8::Value> UncompressBinding::Sync(const v8::Arguments& args) {
 }
 
 // PRIVATE
-async_rtn UncompressBinding::AsyncOperation(eio_req *req) {
+async_rtn UncompressBinding::AsyncOperation(uv_work_t *req) {
   SnappyRequest<std::string>* snappy_req =
     static_cast<SnappyRequest<std::string>*>(req->data);
   std::string dst;
@@ -178,7 +178,7 @@ IsValidCompressedBinding::Sync(const v8::Arguments& args) {
 }
 
 // PRIVATE
-async_rtn IsValidCompressedBinding::After(eio_req *req) {
+async_rtn IsValidCompressedBinding::After(uv_work_t *req) {
   v8::HandleScope scope;
   SnappyRequest<bool>* snappy_req =
     static_cast<SnappyRequest<bool>*>(req->data);
@@ -189,12 +189,12 @@ async_rtn IsValidCompressedBinding::After(eio_req *req) {
   RETURN_ASYNC_AFTER;
 }
 
-int IsValidCompressedBinding::AsyncOperation(eio_req *req) {
+async_rtn IsValidCompressedBinding::AsyncOperation(uv_work_t *req) {
   SnappyRequest<bool>* snappy_req = (SnappyRequest<bool>*) req->data;
   std::string* input = &snappy_req->input;
   snappy_req->result =
     snappy::IsValidCompressedBuffer(input->data(), input->length());
-  return 0;
+  RETURN_ASYNC;
 }
 
 inline void
