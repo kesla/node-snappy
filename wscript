@@ -25,4 +25,4 @@ def build(bld):
   obj.install_path = None
   
 def test(tsk):
-  Utils.exec_command('vows test/* --spec')
+  Utils.exec_command('vows --spec -i')
