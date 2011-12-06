@@ -13,7 +13,7 @@
     "lib": "."
   },
   "scripts": {
-    "test": "vows test.js --spec"
+    "test": "vows --spec -i"
   },
   "engines": {
     "node": ">= 0.4.5"
