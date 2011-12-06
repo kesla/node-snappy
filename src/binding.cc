@@ -59,7 +59,7 @@ inline void Base::CallErrCallback(const v8::Handle<v8::Function>& callback,
 
 // CompressUncompressBase
 // PROTECTED
-int CompressUncompressBase::After(eio_req *req) {
+async_rtn CompressUncompressBase::After(eio_req *req) {
   v8::HandleScope scope;
   SnappyRequest<std::string>* snappy_req =
     static_cast<SnappyRequest<std::string>*>(req->data);
@@ -72,7 +72,7 @@ int CompressUncompressBase::After(eio_req *req) {
   ev_unref(EV_DEFAULT_UC);
   snappy_req->callback.Dispose();
   delete snappy_req;
-  return 0;
+  RETURN_ASYNC_AFTER;
 }
 
 inline void
@@ -89,8 +89,7 @@ CompressUncompressBase::CallOkCallback(const v8::Handle<v8::Function>& callback,
 v8::Handle<v8::Value> CompressBinding::Async(const v8::Arguments& args) {
   v8::HandleScope scope;
   SnappyRequest<std::string>* snappy_req = new SnappyRequest<std::string>(args);
-  eio_custom(AsyncOperation, EIO_PRI_DEFAULT, After, snappy_req);
-  ev_ref(EV_DEFAULT_UC);
+  BEGIN_ASYNC(snappy_req, AsyncOperation, After);
   return v8::Undefined();
 }
 
@@ -106,14 +105,14 @@ v8::Handle<v8::Value> CompressBinding::Sync(const v8::Arguments& args) {
 }
 
 // PRIVATE
-int CompressBinding::AsyncOperation(eio_req *req) {
+async_rtn CompressBinding::AsyncOperation(eio_req *req) {
   SnappyRequest<std::string>* snappy_req =
     static_cast<SnappyRequest<std::string>*>(req->data);
   std::string dst;
   std::string* input = &snappy_req->input;
   snappy::Compress(input->data(), input->length(), &dst);
   snappy_req->result = dst;
-  return 0;
+  RETURN_ASYNC;
 }
 
 // UncompressBinding
@@ -121,8 +120,7 @@ int CompressBinding::AsyncOperation(eio_req *req) {
 v8::Handle<v8::Value> UncompressBinding::Async(const v8::Arguments& args) {
   v8::HandleScope scope;
   SnappyRequest<std::string>* snappy_req = new SnappyRequest<std::string>(args);
-  eio_custom(AsyncOperation, EIO_PRI_DEFAULT, After, snappy_req);
-  ev_ref(EV_DEFAULT_UC);
+  BEGIN_ASYNC(snappy_req, AsyncOperation, After);
   return v8::Undefined();
 }
 
@@ -142,7 +140,7 @@ v8::Handle<v8::Value> UncompressBinding::Sync(const v8::Arguments& args) {
 }
 
 // PRIVATE
-int UncompressBinding::AsyncOperation(eio_req *req) {
+async_rtn UncompressBinding::AsyncOperation(eio_req *req) {
   SnappyRequest<std::string>* snappy_req =
     static_cast<SnappyRequest<std::string>*>(req->data);
   std::string dst;
@@ -152,7 +150,7 @@ int UncompressBinding::AsyncOperation(eio_req *req) {
   } else {
     snappy_req->err = &SnappyErrors::kInvalidInput;
   }
-  return 0;
+  RETURN_ASYNC;
 }
 
 // IsValidCompressedBinding
@@ -163,8 +161,7 @@ IsValidCompressedBinding::Async(const v8::Arguments& args) {
   std::string dst;
   v8::String::Utf8Value data(args[0]->ToString());
   SnappyRequest<bool>* snappy_req = new SnappyRequest<bool>(args);
-  eio_custom(AsyncOperation, EIO_PRI_DEFAULT, After, snappy_req);
-  ev_ref(EV_DEFAULT_UC);
+  BEGIN_ASYNC(snappy_req, AsyncOperation, After);
   return v8::Undefined();
 }
 
@@ -181,7 +178,7 @@ IsValidCompressedBinding::Sync(const v8::Arguments& args) {
 }
 
 // PRIVATE
-int IsValidCompressedBinding::After(eio_req *req) {
+async_rtn IsValidCompressedBinding::After(eio_req *req) {
   v8::HandleScope scope;
   SnappyRequest<bool>* snappy_req =
     static_cast<SnappyRequest<bool>*>(req->data);
@@ -189,7 +186,7 @@ int IsValidCompressedBinding::After(eio_req *req) {
   ev_unref(EV_DEFAULT_UC);
   snappy_req->callback.Dispose();
   delete snappy_req;
-  return 0;
+  RETURN_ASYNC_AFTER;
 }
 
 int IsValidCompressedBinding::AsyncOperation(eio_req *req) {

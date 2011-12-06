@@ -23,6 +23,7 @@
 #include <node.h>
 #include <v8.h>
 #include <string>
+#include "./node_async_shim.h"
 
 namespace nodesnappy {
 
@@ -70,7 +71,7 @@ class Base {
 class CompressUncompressBase : protected Base {
  protected:
   /* Method run after the async operation */
-  static int After(eio_req*);
+  static async_rtn After(eio_req*);
   /* 
    * Call the specifed callback when everything has gone well.
    * Use null as first argument and use the specifed string (converted to a
@@ -93,7 +94,7 @@ class CompressBinding : CompressUncompressBase {
 
  private:
 
-  static int AsyncOperation(eio_req*);
+  static async_rtn AsyncOperation(eio_req*);
 };
 
 /* 
@@ -108,7 +109,7 @@ class UncompressBinding : CompressUncompressBase {
   static v8::Handle<v8::Value> Sync(const v8::Arguments&);
 
  private:
-  static int AsyncOperation(eio_req*);
+  static async_rtn AsyncOperation(eio_req*);
 };
 
 /* 
@@ -123,8 +124,8 @@ class IsValidCompressedBinding : protected Base {
   static v8::Handle<v8::Value> Sync(const v8::Arguments&);
 
  private:
-  static int After(eio_req*);
-  static int AsyncOperation(eio_req*);
+  static async_rtn After(eio_req*);
+  static async_rtn AsyncOperation(eio_req*);
   /* 
    * Call the specifed callback when everything has gone well.
    * Use null as first argument and use the specifed bool (converted to a
