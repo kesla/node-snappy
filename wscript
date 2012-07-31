@@ -11,7 +11,7 @@ def set_options(opt):
   
 def configure(conf):
   conf.check_tool('compiler_cxx')
-  conf.check_tool('node_gyp')
+  conf.check_tool('node_addon')
   
   Utils.exec_command('./configure', cwd = './deps/libsnappy')
 
