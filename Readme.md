@@ -13,22 +13,26 @@ Snappy is widely used inside Google, in everything from BigTable and MapReduce t
 
 ## Examples
 ### String
-    snappy = require('./snappy');
-    // Use synchronous version
-    var compressed= snappy.compressSync('string to compress');
-    var result = snappy.decompressSync(compressed, snappy.parsers.string);
-    // result will be string instead of Buffer
-    console.log(result);
+```js
+  var snappy = require('./snappy');
+  // Use synchronous version
+  var compressed = snappy.compressSync('string to compress');
+  var result = snappy.decompressSync(compressed, snappy.parsers.string);
+  // result will be string instead of Buffer
+  console.log(result);
+```
 
 ### JSON
-    snappy = require('./snappy');
-    // Snappy automatically convert json to a string
-    snappy.compress({"foo": "bar"}, function(err, compressed){
-      snappy.decompress(compressed, snappy.parsers.json, function(err, result){
-      // result will be json instead of Buffer
-        console.log(result["foo"]);
-      }
+```js
+  var snappy = require('./snappy');
+  // Snappy automatically convert json to a string
+  snappy.compress({"foo": "bar"}, function(err, compressed){
+    snappy.decompress(compressed, snappy.parsers.json, function(err, result){
+    // result will be json instead of Buffer
+      console.log(result["foo"]);
     }
+  }
+```
 
 ## API
 ### snappy.compress(input, cb)
