@@ -18,7 +18,9 @@
   "engines": {
     "node": ">= 0.4.5"
   },
-  "dependencies": {},
+  "dependencies": {
+    "bindings": "~1.0.0"
+  },
   "devDependencies": {
     "vows": ">= 0.5.8"
   }
