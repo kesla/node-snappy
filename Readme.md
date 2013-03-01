@@ -9,29 +9,32 @@ Snappy is a compression/decompression library. It does not aim for maximum compr
 Snappy is widely used inside Google, in everything from BigTable and MapReduce to our internal RPC systems. (Snappy has previously been referred to as “Zippy” in some presentations and the likes.)
 
 ## Installation
-- "npm install snappy"
+
+```
+  npm install snappy
+```
 
 ## Examples
 ### String
 ```js
-  var snappy = require('./snappy');
-  // Use synchronous version
-  var compressed = snappy.compressSync('string to compress');
-  var result = snappy.decompressSync(compressed, snappy.parsers.string);
-  // result will be string instead of Buffer
-  console.log(result);
+var snappy = require('./snappy');
+// Use synchronous version
+var compressed = snappy.compressSync('string to compress');
+var result = snappy.decompressSync(compressed, snappy.parsers.string);
+// result will be string instead of Buffer
+console.log(result);
 ```
 
 ### JSON
 ```js
-  var snappy = require('./snappy');
-  // Snappy automatically convert json to a string
-  snappy.compress({"foo": "bar"}, function(err, compressed){
-    snappy.decompress(compressed, snappy.parsers.json, function(err, result){
-    // result will be json instead of Buffer
-      console.log(result["foo"]);
-    }
+var snappy = require('./snappy');
+// Snappy automatically convert json to a string
+snappy.compress({"foo": "bar"}, function(err, compressed){
+  snappy.decompress(compressed, snappy.parsers.json, function(err, result){
+  // result will be json instead of Buffer
+    console.log(result["foo"]);
   }
+}
 ```
 
 ## API
@@ -57,8 +60,8 @@ Decompress `compressed` using `parse` as parser (defaults to `raw`) and return `
 * string
 * raw
 
-# License
-Copyright (c) 2011 David Björklund
+## License
+Copyright (c) 2013 David Björklund
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
