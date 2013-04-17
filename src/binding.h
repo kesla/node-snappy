@@ -23,7 +23,6 @@
 #include <node.h>
 #include <v8.h>
 #include <string>
-#include "./node_async_shim.h"
 
 namespace nodesnappy {
 
@@ -71,8 +70,8 @@ class Base {
 class CompressUncompressBase : protected Base {
  protected:
   /* Method run after the async operation */
-  static async_rtn After(uv_work_t*);
-  /* 
+  static void After(uv_work_t*);
+  /*
    * Call the specifed callback when everything has gone well.
    * Use null as first argument and use the specifed string (converted to a
    * Buffer) as second argument.
@@ -81,7 +80,7 @@ class CompressUncompressBase : protected Base {
                              const std::string&);
 };
 
-/* 
+/*
  * Bindings to the snappy::Compress-method. Includes both asynchronous
  * and synchronous bindings
  */
@@ -94,10 +93,10 @@ class CompressBinding : CompressUncompressBase {
 
  private:
 
-  static async_rtn AsyncOperation(uv_work_t*);
+  static void AsyncOperation(uv_work_t*);
 };
 
-/* 
+/*
  * Bindings to the snappy::Uncompress-method. Includes both asynchronous
  * and synchronous bindings
  */
@@ -109,10 +108,10 @@ class UncompressBinding : CompressUncompressBase {
   static v8::Handle<v8::Value> Sync(const v8::Arguments&);
 
  private:
-  static async_rtn AsyncOperation(uv_work_t*);
+  static void AsyncOperation(uv_work_t*);
 };
 
-/* 
+/*
  * Bindings to the snappy::IsValidCompressedBuffer-method. Includes both
  * asynchronous and synchronous bindings
  */
@@ -124,9 +123,9 @@ class IsValidCompressedBinding : protected Base {
   static v8::Handle<v8::Value> Sync(const v8::Arguments&);
 
  private:
-  static async_rtn After(uv_work_t*);
-  static async_rtn AsyncOperation(uv_work_t*);
-  /* 
+  static void After(uv_work_t*);
+  static void AsyncOperation(uv_work_t*);
+  /*
    * Call the specifed callback when everything has gone well.
    * Use null as first argument and use the specifed bool (converted to a
    * Boolean) as second argument.
