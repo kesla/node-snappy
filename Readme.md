@@ -30,11 +30,10 @@ console.log(result);
 var snappy = require('snappy');
 // Snappy automatically convert json to a string
 snappy.compress({"foo": "bar"}, function(err, compressed){
-  snappy.decompress(compressed, function(err, result){
-  // result will be json instead of Buffer
+  snappy.decompress(compressed, snappy.parsers.json, function(err, result){
+    // result will be json instead of Buffer
     console.log(result["foo"]);
-  },
-  snappy.parsers.json);
+  });
 });
 ```
 
