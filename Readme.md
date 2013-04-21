@@ -46,7 +46,7 @@ Compress `input`, which can be a Buffer, String or arbitrary JavaScript object a
 
 Compress `input`, which can be a Buffer, String or arbitrary JavaScript object and return `compressed`. Throws if an error occurs.
 
-### snappy.decompress(compressed, cb[, parse])
+### snappy.decompress(compressed, parse, cb)
 
 Decompress `compressed` using `parse` as parser (defaults to `raw`) and call `cb` with `err` and `decompressed`.
 
