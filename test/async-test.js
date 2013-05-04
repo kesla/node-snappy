@@ -68,7 +68,7 @@ vows.describe("snappy (asyncronous)").addBatch({
       },
       'and decompress (string-parser)': {
         topic: function(compressed) {
-          decompress(compressed, this.callback, snappy.parsers.string);
+          decompress(compressed, snappy.parsers.string, this.callback);
         },
         'should not have errors': function(err, result) {
           assert.isNull(err);
@@ -82,7 +82,7 @@ vows.describe("snappy (asyncronous)").addBatch({
       },
       'and decompress (no parser)': {
         topic: function(compressed) {
-          decompress(compressed, this.callback);
+          decompress(compressed, snappy.parsers.raw, this.callback);
         },
         'should not have errors': function(err, result) {
           assert.isNull(err);
@@ -118,7 +118,7 @@ vows.describe("snappy (asyncronous)").addBatch({
       },
       'and decompress (json-parser)': {
         topic: function(compressed) {
-          decompress(compressed, this.callback, snappy.parsers.json);
+          decompress(compressed, snappy.parsers.json, this.callback);
         },
         'should not have errors': function(err, result) {
           assert.isNull(err);
@@ -132,7 +132,7 @@ vows.describe("snappy (asyncronous)").addBatch({
       },
       'and decompress (string-parser)': {
         topic: function(compressed) {
-          decompress(compressed, this.callback, snappy.parsers.string);
+          decompress(compressed, snappy.parsers.string, this.callback);
         },
         'should not have errors': function(err, result) {
           assert.isNull(err);
@@ -146,7 +146,7 @@ vows.describe("snappy (asyncronous)").addBatch({
       },
       'and decompress (no parser)': {
         topic: function(compressed) {
-          decompress(compressed, this.callback);
+          decompress(compressed, snappy.parsers.raw, this.callback);
         },
         'should not have errors': function(err, result) {
           assert.isNull(err);
@@ -182,7 +182,7 @@ vows.describe("snappy (asyncronous)").addBatch({
       },
       'and decompress (string-parser)': {
         topic: function(compressed) {
-          decompress(compressed, this.callback, snappy.parsers.string);
+          decompress(compressed, snappy.parsers.string, this.callback);
         },
         'should not have errors': function(err, result) {
           assert.isNull(err);
@@ -196,7 +196,7 @@ vows.describe("snappy (asyncronous)").addBatch({
       },
       'and decompress (no parser)': {
         topic: function(compressed) {
-          decompress(compressed, this.callback);
+          decompress(compressed, snappy.parsers.raw, this.callback);
         },
         'should not have errors': function(err, result) {
           assert.isNull(err);
@@ -215,7 +215,7 @@ vows.describe("snappy (asyncronous)").addBatch({
   "decompress": {
     "buffer (invalid)": {
       topic: function() {
-        decompress(buffer, this.callback, snappy.parsers.string);
+        decompress(buffer, snappy.parsers.string, this.callback);
       },
       'should have error': function(err, result) {
         assert.isError(err);
