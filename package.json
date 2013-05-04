@@ -22,6 +22,6 @@
     "bindings": "~1.0.0"
   },
   "devDependencies": {
-    "vows": ">= 0.5.8"
+    "vows": "~0.7.0"
   }
 }
