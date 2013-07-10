@@ -34,7 +34,7 @@ namespace nodesnappy {
     const char *data = node::Buffer::Data(object);
     input = std::string(data, length);
     v8::Local<v8::Function> local = v8::Local<v8::Function>::Cast(args[1]);
-    callback = v8::Persistent<v8::Function>::New(local);
+    callback = v8::Persistent<v8::Function>::New(v8::Isolate::GetCurrent(), local);
     err = NULL;
   }
 
@@ -79,9 +79,9 @@ inline void
 CompressUncompressBase::CallOkCallback(const v8::Handle<v8::Function>& callback,
                                        const std::string& str) {
   v8::Handle<v8::Value> err = v8::Local<v8::Value>::New(v8::Null());
-  node::Buffer* res = node::Buffer::New(str.length());
+  v8::Local<v8::Object> res = node::Buffer::New(str.length());
   memcpy(node::Buffer::Data(res), str.c_str(), str.length());
-  CallCallback(callback, err, res->handle_);
+  CallCallback(callback, err, res);
 }
 
 // CompressBinding
