@@ -34,7 +34,11 @@ namespace nodesnappy {
     const char *data = node::Buffer::Data(object);
     input = std::string(data, length);
     v8::Local<v8::Function> local = v8::Local<v8::Function>::Cast(args[1]);
-    callback = v8::Persistent<v8::Function>::New(v8::Isolate::GetCurrent(), local);
+    #if NODE_MODULE_VERSION < 12
+      callback = v8::Persistent<v8::Function>::New(local);
+    #else
+      callback = v8::Persistent<v8::Function>::New(v8::Isolate::GetCurrent(), local);
+    #endif
     err = NULL;
   }
 
@@ -79,9 +83,17 @@ inline void
 CompressUncompressBase::CallOkCallback(const v8::Handle<v8::Function>& callback,
                                        const std::string& str) {
   v8::Handle<v8::Value> err = v8::Local<v8::Value>::New(v8::Null());
-  v8::Local<v8::Object> res = node::Buffer::New(str.length());
+  #if NODE_MODULE_VERSION < 12
+    node::Buffer* res = node::Buffer::New(str.length());
+  #else
+    v8::Local<v8::Object> res = node::Buffer::New(str.length());
+  #endif
   memcpy(node::Buffer::Data(res), str.c_str(), str.length());
-  CallCallback(callback, err, res);
+  #if NODE_MODULE_VERSION < 12
+    CallCallback(callback, err, res->handle_);
+  #else
+    CallCallback(callback, err, res);
+  #endif
 }
 
 // CompressBinding
