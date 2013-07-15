@@ -1,5 +1,7 @@
 # Node-snappy [![Build Status](https://secure.travis-ci.org/kesla/node-snappy.png)](http://travis-ci.org/kesla/node-snappy)
 
+[![NPM](https://nodei.co/npm/snappy.png?downloads)](https://nodei.co/npm/snappy/)
+
 ## About
 
 Node module/wrapper for Google's fast compressor/decompressor: <http://code.google.com/p/snappy/>
