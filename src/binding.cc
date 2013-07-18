@@ -29,17 +29,17 @@
 #include <string>
 
 namespace nodesnappy {
-  template<class T> SnappyRequest<T>::SnappyRequest(const v8::Arguments& args){
-    v8::Local<v8::Object> object = args[0]->ToObject();
+    template<class S> template<class T> SnappyRequest<S>::SnappyRequest(const v8::FunctionCallbackInfo<T>& info) {
+    v8::Isolate* isolate = v8::Isolate::GetCurrent();
+    v8::HandleScope scope(isolate);
+
+    v8::Handle<v8::Object> object = info[0]->ToObject();
     size_t length = node::Buffer::Length(object);
     const char *data = node::Buffer::Data(object);
     input = std::string(data, length);
-    v8::Local<v8::Function> local = v8::Local<v8::Function>::Cast(args[1]);
-    #if NODE_VERSION_AT_LEAST(0, 11, 3)
-      callback = v8::Persistent<v8::Function>::New(v8::Isolate::GetCurrent(), local);
-    #else
-      callback = v8::Persistent<v8::Function>::New(local);
-    #endif
+    v8::Local<v8::Function> local = v8::Local<v8::Function>::Cast(info[1]);
+
+    callback.Reset(isolate, local);
     err = NULL;
   }
 
@@ -65,13 +65,14 @@ inline void Base::CallErrCallback(const v8::Handle<v8::Function>& callback,
 // CompressUncompressBase
 // PROTECTED
 void CompressUncompressBase::After(uv_work_t *req) {
-  v8::HandleScope scope;
+  v8::Isolate *isolate = v8::Isolate::GetCurrent();
+  v8::HandleScope scope(isolate);
   SnappyRequest<std::string>* snappy_req =
     static_cast<SnappyRequest<std::string>*>(req->data);
   if (snappy_req->err != NULL) {
-    CallErrCallback(snappy_req->callback, *snappy_req->err);
+    CallErrCallback(v8::Local<v8::Function>::New(isolate, snappy_req->callback), *snappy_req->err);
   } else {
-    CallOkCallback(snappy_req->callback, snappy_req->result);
+    CallOkCallback(v8::Local<v8::Function>::New(isolate, snappy_req->callback), snappy_req->result);
   }
 
   uv_unref((uv_handle_t*) req);
@@ -99,25 +100,27 @@ CompressUncompressBase::CallOkCallback(const v8::Handle<v8::Function>& callback,
 
 // CompressBinding
 // PUBLIC
-v8::Handle<v8::Value> CompressBinding::Async(const v8::Arguments& args) {
-  v8::HandleScope scope;
-  SnappyRequest<std::string>* snappy_req = new SnappyRequest<std::string>(args);
+template<class T> void CompressBinding::Async(const v8::FunctionCallbackInfo<T>& info) {
+  v8::Isolate *isolate = v8::Isolate::GetCurrent();
+  v8::HandleScope scope(isolate);
+  SnappyRequest<std::string>* snappy_req = new SnappyRequest<std::string>(info);
   uv_work_t* _req = new uv_work_t;
   _req->data = snappy_req;
   uv_queue_work(uv_default_loop(), _req, AsyncOperation, (uv_after_work_cb)After);
 
-  return v8::Undefined();
+  info.GetReturnValue().Set(v8::Undefined());
 }
 
-v8::Handle<v8::Value> CompressBinding::Sync(const v8::Arguments& args) {
-  v8::HandleScope scope;
-  v8::Local<v8::Object> input = args[0]->ToObject();
+template<class T> void CompressBinding::Sync(const v8::FunctionCallbackInfo<T>& info) {
+  v8::Isolate *isolate = v8::Isolate::GetCurrent();
+  v8::HandleScope scope(isolate);
+  v8::Local<v8::Object> input = info[0]->ToObject();
   size_t length = node::Buffer::Length(input);
   char *data = node::Buffer::Data(input);
   std::string dst;
   snappy::Compress(data, length, &dst);
-  CallOkCallback(v8::Local<v8::Function>::Cast(args[1]), dst);
-  return scope.Close(v8::Undefined());
+  CallOkCallback(v8::Local<v8::Function>::Cast(info[1]), dst);
+  info.GetReturnValue().Set(v8::Undefined());
 }
 
 // PRIVATE
@@ -132,28 +135,30 @@ void CompressBinding::AsyncOperation(uv_work_t *req) {
 
 // UncompressBinding
 // PUBLIC
-v8::Handle<v8::Value> UncompressBinding::Async(const v8::Arguments& args) {
-  v8::HandleScope scope;
-  SnappyRequest<std::string>* snappy_req = new SnappyRequest<std::string>(args);
+template<class T> void UncompressBinding::Async(const v8::FunctionCallbackInfo<T>& info) {
+  v8::Isolate *isolate = v8::Isolate::GetCurrent();
+  v8::HandleScope scope(isolate);
+  SnappyRequest<std::string>* snappy_req = new SnappyRequest<std::string>(info);
   uv_work_t* _req = new uv_work_t;
   _req->data = snappy_req;
   uv_queue_work(uv_default_loop(), _req, AsyncOperation, (uv_after_work_cb)After);
-  return v8::Undefined();
+  info.GetReturnValue().Set(v8::Undefined());
 }
 
-v8::Handle<v8::Value> UncompressBinding::Sync(const v8::Arguments& args) {
-  v8::HandleScope scope;
+template<class T> void UncompressBinding::Sync(const v8::FunctionCallbackInfo<T>& info) {
+  v8::Isolate *isolate = v8::Isolate::GetCurrent();
+  v8::HandleScope scope(isolate);
   std::string dst;
-  v8::Local<v8::Object> input = args[0]->ToObject();
+  v8::Local<v8::Object> input = info[0]->ToObject();
   size_t length = node::Buffer::Length(input);
   char *data = node::Buffer::Data(input);
-  v8::Handle<v8::Function> callback = v8::Local<v8::Function>::Cast(args[1]);
+  v8::Handle<v8::Function> callback = v8::Local<v8::Function>::Cast(info[1]);
   if (snappy::Uncompress(data, length, &dst)) {
     CallOkCallback(callback, dst);
   } else {
     CallErrCallback(callback, SnappyErrors::kInvalidInput);
   }
-  return scope.Close(v8::Undefined());
+  info.GetReturnValue().Set(v8::Undefined());
 }
 
 // PRIVATE
@@ -171,36 +176,39 @@ void UncompressBinding::AsyncOperation(uv_work_t *req) {
 
 // IsValidCompressedBinding
 // PUBLIC
-v8::Handle<v8::Value>
-IsValidCompressedBinding::Async(const v8::Arguments& args) {
-  v8::HandleScope scope;
+template<class T> void
+IsValidCompressedBinding::Async(const v8::FunctionCallbackInfo<T>& info) {
+  v8::Isolate *isolate = v8::Isolate::GetCurrent();
+  v8::HandleScope scope(isolate);
   std::string dst;
-  v8::String::Utf8Value data(args[0]->ToString());
-  SnappyRequest<bool>* snappy_req = new SnappyRequest<bool>(args);
+  v8::String::Utf8Value data(info[0]->ToString());
+  SnappyRequest<bool>* snappy_req = new SnappyRequest<bool>(info);
   uv_work_t* _req = new uv_work_t;
   _req->data = snappy_req;
   uv_queue_work(uv_default_loop(), _req, AsyncOperation, (uv_after_work_cb)After);
-  return v8::Undefined();
+  info.GetReturnValue().Set(v8::Undefined());
 }
 
-v8::Handle<v8::Value>
-IsValidCompressedBinding::Sync(const v8::Arguments& args) {
-  v8::HandleScope scope;
+template<class T> void
+IsValidCompressedBinding::Sync(const v8::FunctionCallbackInfo<T>& info) {
+  v8::Isolate *isolate = v8::Isolate::GetCurrent();
+  v8::HandleScope scope(isolate);
   std::string dst;
-  v8::Local<v8::Object> input = args[0]->ToObject();
+  v8::Local<v8::Object> input = info[0]->ToObject();
   size_t length = node::Buffer::Length(input);
   char *data = node::Buffer::Data(input);
   bool valid = snappy::IsValidCompressedBuffer(data, length);
-  CallOkCallback(v8::Local<v8::Function>::Cast(args[1]), valid);
-  return scope.Close(v8::Undefined());
+  CallOkCallback(v8::Local<v8::Function>::Cast(info[1]), valid);
+  info.GetReturnValue().Set(v8::Undefined());
 }
 
 // PRIVATE
 void IsValidCompressedBinding::After(uv_work_t *req) {
-  v8::HandleScope scope;
+  v8::Isolate *isolate = v8::Isolate::GetCurrent();
+  v8::HandleScope scope(isolate);
   SnappyRequest<bool>* snappy_req =
     static_cast<SnappyRequest<bool>*>(req->data);
-  CallOkCallback(snappy_req->callback, snappy_req->result);
+  CallOkCallback(v8::Local<v8::Function>::New(isolate, snappy_req->callback), snappy_req->result);
   uv_unref((uv_handle_t*) req);
   snappy_req->callback.Dispose();
   delete snappy_req;
@@ -224,15 +232,19 @@ IsValidCompressedBinding::CallOkCallback(
 }
 
 extern "C" void
-init(v8::Handle<v8::Object> target) {
-  v8::HandleScope scope;
-  NODE_SET_METHOD(target, "compress", CompressBinding::Async);
-  NODE_SET_METHOD(target, "compressSync", CompressBinding::Sync);
-  NODE_SET_METHOD(target, "uncompress", UncompressBinding::Async);
-  NODE_SET_METHOD(target, "uncompressSync", UncompressBinding::Sync);
-  NODE_SET_METHOD(target, "isValidCompressed", IsValidCompressedBinding::Async);
-  NODE_SET_METHOD(target, "isValidCompressedSync",
-    IsValidCompressedBinding::Sync);
+init(v8::Handle<v8::Object> exports) {
+  exports->Set(v8::String::NewSymbol("compress"),
+    v8::FunctionTemplate::New(CompressBinding::Async)->GetFunction());
+  exports->Set(v8::String::NewSymbol("compressSync"),
+    v8::FunctionTemplate::New(CompressBinding::Sync)->GetFunction());
+  exports->Set(v8::String::NewSymbol("uncompress"),
+    v8::FunctionTemplate::New(UncompressBinding::Async)->GetFunction());
+  exports->Set(v8::String::NewSymbol("uncompressSync"),
+    v8::FunctionTemplate::New(UncompressBinding::Sync)->GetFunction());
+  exports->Set(v8::String::NewSymbol("isValidCompressed"),
+    v8::FunctionTemplate::New(IsValidCompressedBinding::Async)->GetFunction());
+  exports->Set(v8::String::NewSymbol("isValidCompressedSync"),
+    v8::FunctionTemplate::New(IsValidCompressedBinding::Sync)->GetFunction());
 }
 
 NODE_MODULE(binding, init)

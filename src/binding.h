@@ -29,10 +29,10 @@ namespace nodesnappy {
 /*
  * struct used in the async versions, used to store data.
  */
-template<class T> struct SnappyRequest {
-  SnappyRequest(const v8::Arguments&);
+template<class S> struct SnappyRequest {
+  template<class T> SnappyRequest(const v8::FunctionCallbackInfo<T>&);
   std::string input;
-  T result;
+  S result;
   v8::Persistent<v8::Function> callback;
   const std::string* err;
 };
@@ -87,12 +87,11 @@ class CompressUncompressBase : protected Base {
 class CompressBinding : CompressUncompressBase {
  public:
   /* Asynchronous binding */
-  static v8::Handle<v8::Value> Async(const v8::Arguments&);
+  template<class T> static void Async(const v8::FunctionCallbackInfo<T>&);
   /* Synchronous binding */
-  static v8::Handle<v8::Value> Sync(const v8::Arguments&);
+  template<class T> static void Sync(const v8::FunctionCallbackInfo<T>&);
 
  private:
-
   static void AsyncOperation(uv_work_t*);
 };
 
@@ -103,9 +102,9 @@ class CompressBinding : CompressUncompressBase {
 class UncompressBinding : CompressUncompressBase {
  public:
   /* Asynchronous binding */
-  static v8::Handle<v8::Value> Async(const v8::Arguments&);
+  template<class T> static void Async(const v8::FunctionCallbackInfo<T>&);
   /* Synchronous binding */
-  static v8::Handle<v8::Value> Sync(const v8::Arguments&);
+  template<class T> static void Sync(const v8::FunctionCallbackInfo<T>&);
 
  private:
   static void AsyncOperation(uv_work_t*);
@@ -118,9 +117,9 @@ class UncompressBinding : CompressUncompressBase {
 class IsValidCompressedBinding : protected Base {
  public:
   /* Asynchronous binding */
-  static v8::Handle<v8::Value> Async(const v8::Arguments&);
+  template<class T> static void Async(const v8::FunctionCallbackInfo<T>&);
   /* Synchronous binding */
-  static v8::Handle<v8::Value> Sync(const v8::Arguments&);
+  template<class T> static void Sync(const v8::FunctionCallbackInfo<T>&);
 
  private:
   static void After(uv_work_t*);
