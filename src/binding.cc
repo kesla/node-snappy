@@ -174,7 +174,6 @@ void UncompressBinding::AsyncOperation(uv_work_t *req) {
 v8::Handle<v8::Value>
 IsValidCompressedBinding::Async(const v8::Arguments& args) {
   v8::HandleScope scope;
-  std::string dst;
   v8::String::Utf8Value data(args[0]->ToString());
   SnappyRequest<bool>* snappy_req = new SnappyRequest<bool>(args);
   uv_work_t* _req = new uv_work_t;
@@ -186,7 +185,6 @@ IsValidCompressedBinding::Async(const v8::Arguments& args) {
 v8::Handle<v8::Value>
 IsValidCompressedBinding::Sync(const v8::Arguments& args) {
   v8::HandleScope scope;
-  std::string dst;
   v8::Local<v8::Object> input = args[0]->ToObject();
   size_t length = node::Buffer::Length(input);
   char *data = node::Buffer::Data(input);
