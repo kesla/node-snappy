@@ -29,15 +29,14 @@
 #include <string>
 
 namespace nodesnappy {
-  template<class T> NAN_CONSTRUCTOR(SnappyRequest<T>::SnappyRequest) {
+  template<class T> SnappyRequest<T>::SnappyRequest(_NAN_METHOD_ARGS) {
     NanScope();
 
     v8::Handle<v8::Object> object = args[0]->ToObject();
     size_t length = node::Buffer::Length(object);
     const char *data = node::Buffer::Data(object);
     input = std::string(data, length);
-    v8::Local<v8::Function> local = v8::Local<v8::Function>::Cast(args[1]);
-    callback = new NanCallback(local);
+    callback = new NanCallback(v8::Local<v8::Function>::Cast(args[1]));
     err = NULL;
   }
 

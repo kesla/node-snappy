@@ -31,7 +31,7 @@ namespace nodesnappy {
  * struct used in the async versions, used to store data.
  */
 template<class T> struct SnappyRequest {
-  NAN_CONSTRUCTOR(SnappyRequest);
+  SnappyRequest(_NAN_METHOD_ARGS);
   std::string input;
   T result;
   NanCallback *callback;
