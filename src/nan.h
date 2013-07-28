@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2013 NAN contributors:
  *   - Rod Vagg <https://github.com/rvagg>
- *   - King Koopa <https://github.com/kkoopa>
+ *   - Benjamin Byholm <https://github.com/kkoopa>
  *   - Trevor Norris <https://github.com/trevnorris>
  *
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
@@ -94,21 +94,60 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
         v8::Local<v8::String> property                                         \
       , v8::Local<v8::Value> value                                             \
       , _NAN_SETTER_ARGS)
+# define _NAN_PROPERTY_GETTER_ARGS                                             \
+    const v8::PropertyCallbackInfo<v8::Value>& args
+# define NAN_PROPERTY_GETTER(name)                                             \
+    void name(v8::Local<v8::String> property                                   \
+      , _NAN_PROPERTY_GETTER_ARGS)
+# define _NAN_PROPERTY_SETTER_ARGS                                             \
+    const v8::PropertyCallbackInfo<v8::Value>& args
+# define NAN_PROPERTY_SETTER(name)                                             \
+    void name(v8::Local<v8::String> property                                   \
+    , v8::Local<v8::Value> value                                               \
+    , _NAN_PROPERTY_SETTER_ARGS)
+# define _NAN_PROPERTY_ENUMERATOR_ARGS                                         \
+    const v8::PropertyCallbackInfo<v8::Array>& args
+# define NAN_PROPERTY_ENUMERATOR(name)                                         \
+    void name(_NAN_PROPERTY_ENUMERATOR_ARGS)
+# define _NAN_PROPERTY_DELETER_ARGS                                            \
+    const v8::PropertyCallbackInfo<v8::Boolean>& args
+# define NAN_PROPERTY_DELETER(name)                                            \
+    void name(                                                                 \
+        v8::Local<v8::String> property                                         \
+      , _NAN_PROPERTY_DELETER_ARGS)
+# define _NAN_PROPERTY_QUERY_ARGS                                              \
+    const v8::PropertyCallbackInfo<v8::Integer>& args
+# define NAN_PROPERTY_QUERY(name)                                              \
+    void name(v8::Local<v8::String> property, _NAN_PROPERTY_QUERY_ARGS)
+# define NanGetInternalFieldPointer(object, index)                             \
+    object->GetAlignedPointerFromInternalField(index)
+# define NanSetInternalFieldPointer(object, index, value)                      \
+    object->SetAlignedPointerInInternalField(index, value)
+
+# define NAN_WEAK_CALLBACK(type, name)                                         \
+    void name(                                                                 \
+      v8::Isolate* isolate,                                                    \
+      v8::Persistent<v8::Object>* object,                                      \
+      type data)
+# define NAN_WEAK_CALLBACK_OBJECT (*object)
+# define NAN_WEAK_CALLBACK_DATA(type) ((type) data)
 
 # define NanScope() v8::HandleScope scope(nan_isolate)
-# define NanReturnValue(value) return args.GetReturnValue().Set(value);
-# define NanReturnUndefined() return;
-# define NanAssignPersistent(type, handle, obj) handle.Reset(nan_isolate, obj);
+# define NanReturnValue(value) return args.GetReturnValue().Set(value)
+# define NanReturnUndefined() return
+# define NanAssignPersistent(type, handle, obj) handle.Reset(nan_isolate, obj)
 # define NanObjectWrapHandle(obj) obj->handle()
+# define NanMakeWeak(handle, parameter, callback)                              \
+    handle.MakeWeak(nan_isolate, parameter, callback)
 
-# define THROW_ERROR(fun, errmsg)                                              \
+# define _NAN_THROW_ERROR(fun, errmsg)                                         \
     do {                                                                       \
       NanScope();                                                              \
       v8::ThrowException(fun(v8::String::New(errmsg)));                        \
     } while (0);
 
   inline static void NanThrowError(const char* errmsg) {
-    THROW_ERROR(v8::Exception::Error, errmsg);
+    _NAN_THROW_ERROR(v8::Exception::Error, errmsg);
   }
 
   inline static void NanThrowError(v8::Local<v8::Value> error) {
@@ -117,11 +156,11 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   }
 
   inline static void NanThrowTypeError(const char* errmsg) {
-    THROW_ERROR(v8::Exception::TypeError, errmsg);
+    _NAN_THROW_ERROR(v8::Exception::TypeError, errmsg);
   }
 
   inline static void NanThrowRangeError(const char* errmsg) {
-    THROW_ERROR(v8::Exception::RangeError, errmsg);
+    _NAN_THROW_ERROR(v8::Exception::RangeError, errmsg);
   }
 
   template<class T> static inline void NanDispose(v8::Persistent<T> &handle) {
@@ -129,16 +168,24 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   }
 
   static inline v8::Local<v8::Object> NanNewBufferHandle (
+      char *data,
+      size_t length,
+      node::smalloc::FreeCallback callback,
+      void *hint) {
+    return node::Buffer::New(data, length, callback, hint);
+  }
+
+  static inline v8::Local<v8::Object> NanNewBufferHandle (
      char *data, uint32_t size) {
     return node::Buffer::New(data, size);
   }
 
-  static inline v8::Local<v8::Object> NanBufferUse(char* data, uint32_t size) {
-    return node::Buffer::Use(data, size);
-  }
-
   static inline v8::Local<v8::Object> NanNewBufferHandle (uint32_t size) {
     return node::Buffer::New(size);
+  }
+
+  static inline v8::Local<v8::Object> NanBufferUse(char* data, uint32_t size) {
+    return node::Buffer::Use(data, size);
   }
 
   template <class TypeName>
@@ -158,6 +205,14 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     return NanPersistentToLocal(function_template)->HasInstance(value);
   }
 
+  static inline v8::Local<v8::Context> NanNewContextHandle(
+    v8::ExtensionConfiguration* extensions = NULL,
+    v8::Handle<v8::ObjectTemplate> g_template = v8::Handle<v8::ObjectTemplate>(),
+    v8::Handle<v8::Value> g_object = v8::Handle<v8::Value>()) {
+      return v8::Local<v8::Context>::New(nan_isolate, v8::Context::New(
+          nan_isolate, extensions, g_template, g_object));
+  }
+
 #else
 // Node 0.8 and 0.10
 
@@ -169,25 +224,59 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define _NAN_SETTER_ARGS const v8::AccessorInfo &args
 # define NAN_SETTER(name)                                                      \
     void name(                                                                 \
-        v8::Local<v8::String> property                                         \
-      , v8::Local<v8::Value> value                                             \
-      , _NAN_SETTER_ARGS)
+      v8::Local<v8::String> property                                           \
+    , v8::Local<v8::Value> value                                               \
+    , _NAN_SETTER_ARGS)
+# define _NAN_PROPERTY_GETTER_ARGS const v8::AccessorInfo& args
+# define NAN_PROPERTY_GETTER(name)                                             \
+    v8::Handle<v8::Value> name(v8::Local<v8::String> property                  \
+    , _NAN_PROPERTY_GETTER_ARGS)
+# define _NAN_PROPERTY_SETTER_ARGS const v8::AccessorInfo& args
+# define NAN_PROPERTY_SETTER(name)                                             \
+    v8::Handle<v8::Value> name(v8::Local<v8::String> property                  \
+    , v8::Local<v8::Value> value                                               \
+    , _NAN_PROPERTY_SETTER_ARGS)
+# define _NAN_PROPERTY_ENUMERATOR_ARGS const v8::AccessorInfo& args
+# define NAN_PROPERTY_ENUMERATOR(name)                                         \
+    v8::Handle<v8::Array> name(_NAN_PROPERTY_ENUMERATOR_ARGS)
+# define _NAN_PROPERTY_DELETER_ARGS const v8::AccessorInfo& args
+# define NAN_PROPERTY_DELETER(name)                                            \
+    v8::Handle<v8::Boolean> name(                                              \
+      v8::Local<v8::String> property                                           \
+    , _NAN_PROPERTY_DELETER_ARGS)
+# define _NAN_PROPERTY_QUERY_ARGS const v8::AccessorInfo& args
+# define NAN_PROPERTY_QUERY(name)                                              \
+    v8::Handle<v8::Integer> name(                                              \
+      v8::Local<v8::String> property                                           \
+    , _NAN_PROPERTY_QUERY_ARGS)
+
+# define NanGetInternalFieldPointer(object, index)                             \
+    object->GetPointerFromInternalField(index)
+# define NanSetInternalFieldPointer(object, index, value)                      \
+    object->SetPointerInInternalField(index, value)
+# define NAN_WEAK_CALLBACK(type, name) void name(                              \
+                v8::Persistent<v8::Value> object,                              \
+                void *data)
+# define NAN_WEAK_CALLBACK_OBJECT object
+# define NAN_WEAK_CALLBACK_DATA(type) ((type) data)
 
 # define NanScope() v8::HandleScope scope
-# define NanReturnValue(value) return scope.Close(value);
-# define NanReturnUndefined() return v8::Undefined();
+# define NanReturnValue(value) return scope.Close(value)
+# define NanReturnUndefined() return v8::Undefined()
 # define NanAssignPersistent(type, handle, obj)                                \
-    handle = v8::Persistent<type>::New(obj);
+    handle = v8::Persistent<type>::New(obj)
 # define NanObjectWrapHandle(obj) obj->handle_
+# define NanMakeWeak(handle, parameters, callback)                             \
+    handle.MakeWeak(parameters, callback)
 
-# define THROW_ERROR(fun, errmsg)                                              \
+# define _NAN_THROW_ERROR(fun, errmsg)                                         \
     do {                                                                       \
       NanScope();                                                              \
       return v8::ThrowException(fun(v8::String::New(errmsg)));                 \
     } while (0);
 
   inline static v8::Handle<v8::Value> NanThrowError(const char* errmsg) {
-    THROW_ERROR(v8::Exception::Error, errmsg);
+    _NAN_THROW_ERROR(v8::Exception::Error, errmsg);
   }
 
   inline static v8::Handle<v8::Value> NanThrowError(
@@ -197,11 +286,11 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   }
 
   inline static v8::Handle<v8::Value> NanThrowTypeError(const char* errmsg) {
-    THROW_ERROR(v8::Exception::TypeError, errmsg);
+    _NAN_THROW_ERROR(v8::Exception::TypeError, errmsg);
   }
 
   inline static v8::Handle<v8::Value> NanThrowRangeError(const char* errmsg) {
-    THROW_ERROR(v8::Exception::RangeError, errmsg);
+    _NAN_THROW_ERROR(v8::Exception::RangeError, errmsg);
   }
 
   template<class T> static inline void NanDispose(v8::Persistent<T> &handle) {
@@ -209,8 +298,21 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   }
 
   static inline v8::Local<v8::Object> NanNewBufferHandle (
+      char *data,
+      size_t length,
+      node::Buffer::free_callback callback,
+      void *hint) {
+    return v8::Local<v8::Object>::New(
+        node::Buffer::New(data, length, callback, hint)->handle_);
+  }
+
+  static inline v8::Local<v8::Object> NanNewBufferHandle (
      char *data, uint32_t size) {
     return v8::Local<v8::Object>::New(node::Buffer::New(data, size)->handle_);
+  }
+
+  static inline v8::Local<v8::Object> NanNewBufferHandle (uint32_t size) {
+    return v8::Local<v8::Object>::New(node::Buffer::New(size)->handle_);
   }
 
   static inline void FreeData(char *data, void *hint) {
@@ -239,6 +341,19 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     return function_template->HasInstance(value);
   }
 
+  static inline v8::Local<v8::Context> NanNewContextHandle(
+        v8::ExtensionConfiguration* extensions = NULL
+      , v8::Handle<v8::ObjectTemplate> g_template =
+            v8::Handle<v8::ObjectTemplate>()
+      , v8::Handle<v8::Value> g_object = v8::Handle<v8::Value>()
+    ) {
+      v8::Persistent<v8::Context> ctx =
+          v8::Context::New(extensions, g_template, g_object);
+      v8::Local<v8::Context> lctx = v8::Local<v8::Context>::New(ctx);
+      ctx.Dispose();
+      return lctx;
+  }
+
 #endif // node version
 
 class NanCallback {
@@ -255,9 +370,9 @@ class NanCallback {
    handle.Dispose();
   }
 
-  v8::Local<v8::Function> GetFunction () {
-    NanScope();
-    return NanPersistentToLocal(handle).As<v8::Function>();
+  inline v8::Local<v8::Function> GetFunction () {
+    return NanPersistentToLocal(handle)->Get(NanSymbol("callback"))
+        .As<v8::Function>();
   }
 
   // deprecated
