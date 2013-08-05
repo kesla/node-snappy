@@ -23,6 +23,7 @@
 #include <node.h>
 #include <v8.h>
 #include <string>
+#include "nan.h"
 
 namespace nodesnappy {
 
@@ -30,10 +31,10 @@ namespace nodesnappy {
  * struct used in the async versions, used to store data.
  */
 template<class T> struct SnappyRequest {
-  SnappyRequest(const v8::Arguments&);
+  SnappyRequest(_NAN_METHOD_ARGS);
   std::string input;
   T result;
-  v8::Persistent<v8::Function> callback;
+  NanCallback *callback;
   const std::string* err;
 };
 
@@ -87,12 +88,11 @@ class CompressUncompressBase : protected Base {
 class CompressBinding : CompressUncompressBase {
  public:
   /* Asynchronous binding */
-  static v8::Handle<v8::Value> Async(const v8::Arguments&);
+  static NAN_METHOD(Async);
   /* Synchronous binding */
-  static v8::Handle<v8::Value> Sync(const v8::Arguments&);
+  static NAN_METHOD(Sync);
 
  private:
-
   static void AsyncOperation(uv_work_t*);
 };
 
@@ -103,9 +103,9 @@ class CompressBinding : CompressUncompressBase {
 class UncompressBinding : CompressUncompressBase {
  public:
   /* Asynchronous binding */
-  static v8::Handle<v8::Value> Async(const v8::Arguments&);
+  static NAN_METHOD(Async);
   /* Synchronous binding */
-  static v8::Handle<v8::Value> Sync(const v8::Arguments&);
+  static NAN_METHOD(Sync);
 
  private:
   static void AsyncOperation(uv_work_t*);
@@ -118,9 +118,9 @@ class UncompressBinding : CompressUncompressBase {
 class IsValidCompressedBinding : protected Base {
  public:
   /* Asynchronous binding */
-  static v8::Handle<v8::Value> Async(const v8::Arguments&);
+  static NAN_METHOD(Async);
   /* Synchronous binding */
-  static v8::Handle<v8::Value> Sync(const v8::Arguments&);
+  static NAN_METHOD(Sync);
 
  private:
   static void After(uv_work_t*);
