@@ -161,7 +161,6 @@ void UncompressBinding::AsyncOperation(uv_work_t *req) {
 // PUBLIC
 NAN_METHOD(IsValidCompressedBinding::Async) {
   NanScope();
-  std::string dst;
   v8::String::Utf8Value data(args[0]->ToString());
   SnappyRequest<bool>* snappy_req = new SnappyRequest<bool>(args);
   uv_work_t* _req = new uv_work_t;
@@ -172,7 +171,6 @@ NAN_METHOD(IsValidCompressedBinding::Async) {
 
 NAN_METHOD(IsValidCompressedBinding::Sync) {
   NanScope();
-  std::string dst;
   v8::Local<v8::Object> input = args[0]->ToObject();
   size_t length = node::Buffer::Length(input);
   char *data = node::Buffer::Data(input);
