@@ -19,7 +19,8 @@
     "node": ">= 0.4.5"
   },
   "dependencies": {
-    "bindings": "~1.0.0"
+    "bindings": "~1.1.0",
+    "nan": "~0.3.0"
   },
   "devDependencies": {
     "vows": "~0.7.0"
