@@ -55,7 +55,7 @@ inline void Base::CallErrCallback(const v8::Handle<v8::Function>& callback,
                                   const std::string& str) {
   v8::Handle<v8::Value> err =
     v8::Exception::Error(v8::String::New(str.data(), str.length()));
-  v8::Handle<v8::Value> res = v8::Local<v8::Value>::New(v8::Null());
+  v8::Handle<v8::Value> res = NanNewLocal<v8::Value>(v8::Null());
   CallCallback(callback, err, res);
 }
 
@@ -80,7 +80,7 @@ void CompressUncompressBase::After(uv_work_t *req) {
 inline void
 CompressUncompressBase::CallOkCallback(const v8::Handle<v8::Function>& callback,
                                        const std::string& str) {
-  v8::Handle<v8::Value> err = v8::Local<v8::Value>::New(v8::Null());
+  v8::Handle<v8::Value> err = NanNewLocal<v8::Value>(v8::Null());
   v8::Local<v8::Object> res = NanNewBufferHandle(str.length());
   memcpy(node::Buffer::Data(res), str.c_str(), str.length());
   CallCallback(callback, err, res);
@@ -202,8 +202,8 @@ inline void
 IsValidCompressedBinding::CallOkCallback(
     const v8::Handle<v8::Function>& callback,
     const bool data) {
-  v8::Local<v8::Value> err = v8::Local<v8::Value>::New(v8::Null());
-  v8::Local<v8::Value> res = v8::Local<v8::Value>::New(v8::Boolean::New(data));
+  v8::Local<v8::Value> err = NanNewLocal<v8::Value>(v8::Null());
+  v8::Local<v8::Value> res = NanNewLocal<v8::Value>(v8::Boolean::New(data));
   CallCallback(callback, err, res);
 }
 
