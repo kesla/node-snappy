@@ -36,12 +36,16 @@
 #ifndef UTIL_SNAPPY_OPENSOURCE_SNAPPY_STUBS_PUBLIC_H_
 #define UTIL_SNAPPY_OPENSOURCE_SNAPPY_STUBS_PUBLIC_H_
 
-#if 0
+#if 1
 #include <stdint.h>
 #endif
 
 #if 1
 #include <stddef.h>
+#endif
+
+#if 0
+#include <sys/uio.h>
 #endif
 
 #define SNAPPY_MAJOR 1
@@ -54,7 +58,7 @@
 
 namespace snappy {
 
-#if 0
+#if 1
 typedef int8_t int8;
 typedef uint8_t uint8;
 typedef int16_t int16;
@@ -79,6 +83,15 @@ typedef std::string string;
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
   TypeName(const TypeName&);               \
   void operator=(const TypeName&)
+
+#if !0
+// Windows does not have an iovec type, yet the concept is universally useful.
+// It is simple to define it ourselves, so we put it inside our own namespace.
+struct iovec {
+	void* iov_base;
+	size_t iov_len;
+};
+#endif
 
 }  // namespace snappy
 
