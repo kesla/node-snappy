@@ -10,7 +10,7 @@ test('compress() string', function (t) {
   snappy.compress(inputString, function (err, buffer) {
     compressed = buffer
     t.error(err)
-    t.ok(Buffer.isBuffer(buffer), 'should retur a Buffer')
+    t.ok(Buffer.isBuffer(buffer), 'should return a Buffer')
     t.end()
   })
 })
@@ -24,23 +24,23 @@ test('compress() buffer', function (t) {
   })
 })
 
-// For now commented out since isValidCompressed fucks things up completely
+test('isValidCompressed() on valid data', function (t) {
+  snappy.isValidCompressed(compressed, function (err, isValidCompressed) {
+    t.error(err)
+    t.equal(isValidCompressed, true)
+    t.end()
+  })
+})
 
-// test('isValidCompressed() on valid data', function (t) {
-//   snappy.isValidCompressed(compressed, function (err, isValidCompressed) {
-//     t.error(err)
-//     t.equal(isValidCompressed, true)
-//     t.end()
-//   })
-// })
+test('isValidCompressed() on invalid data', function (t) {
+  snappy.isValidCompressed(new Buffer('beep boop'), function (err, isValidCompressed) {
+    t.error(err)
+    t.equal(isValidCompressed, false)
+    t.end()
+  })
+})
 
-// test('isValidCompressed() on invalid data', function (t) {
-//   snappy.isValidCompressed(new Buffer('beep boop'), function (err, isValidCompressed) {
-//     t.error(err)
-//     t.equal(isValidCompressed, false)
-//     t.end()
-//   })
-// })
+// For now commented out since things are a bit broken :(
 
 test('uncompress() defaults to Buffer', function (t) {
   snappy.uncompress(compressed, function (err, buffer) {
