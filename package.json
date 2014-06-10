@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "bindings": "~1.1.1",
-    "nan": "~1.1.0"
+    "nan": "~1.2.0"
   },
   "devDependencies": {
     "tap": "^0.4.11"
