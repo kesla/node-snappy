@@ -61,7 +61,7 @@ test('uncompress() returning a Buffer', function (t) {
 test('uncompress() returning a String', function (t) {
   snappy.uncompress(compressed, { asBuffer: false }, function (err, buffer) {
     t.error(err)
-    t.deepEqual(buffer, inputBuffer)
+    t.deepEqual(buffer, inputString)
     t.end()
   })
 })

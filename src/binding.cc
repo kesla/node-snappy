@@ -92,8 +92,8 @@ class IsValidCompressedWorker : public NanAsyncWorker {
 
 class UncompressWorker : public NanAsyncWorker {
   public:
-    UncompressWorker(std::string* input, NanCallback *callback)
-      : NanAsyncWorker(callback), input(input) {}
+    UncompressWorker(std::string* input, bool asBuffer, NanCallback *callback)
+      : NanAsyncWorker(callback), input(input), asBuffer(asBuffer) {}
 
     ~UncompressWorker() {
       delete input;
@@ -106,8 +106,13 @@ class UncompressWorker : public NanAsyncWorker {
     void HandleOKCallback() {
       NanScope();
 
-      v8::Local<v8::Object> res = NanNewBufferHandle(dst.length());
-      memcpy(node::Buffer::Data(res), dst.c_str(), dst.length());
+      v8::Local<v8::Value> res;
+      if (asBuffer) {
+        res = NanNewBufferHandle(dst.length());
+        memcpy(node::Buffer::Data(res), dst.c_str(), dst.length());
+      } else {
+        res = NanNew<v8::String>(dst.c_str(), dst.length());
+      }
 
       v8::Local<v8::Value> argv[] = {
           NanNull()
@@ -120,6 +125,7 @@ class UncompressWorker : public NanAsyncWorker {
   private:
     std::string* input;
     std::string dst;
+    bool asBuffer;
 };
 
 NAN_METHOD(Compress) {
@@ -167,17 +173,19 @@ NAN_METHOD(IsValidCompressed) {
 NAN_METHOD(Uncompress) {
   NanScope();
 
-  v8::Handle<v8::Object> object = args[0]->ToObject();
+  v8::Handle<v8::Object> object = args[0].As<v8::Object>();
+  v8::Local<v8::Object> optionsObj = args[1].As<v8::Object>();
   size_t length = node::Buffer::Length(object);
   const char *data = node::Buffer::Data(object);
   std::string *input = new std::string(data, length);
+  bool asBuffer = NanBooleanOptionValue(optionsObj, NanNew("asBuffer"), true);
 
   NanCallback* callback = new NanCallback(
-    v8::Local<v8::Function>::Cast(args[1])
+    v8::Local<v8::Function>::Cast(args[2])
   );
 
   UncompressWorker* worker = new UncompressWorker(
-      input, callback
+      input, asBuffer, callback
   );
 
   NanAsyncQueueWorker(worker);
