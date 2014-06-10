@@ -89,8 +89,6 @@ class CompressBinding : CompressUncompressBase {
  public:
   /* Asynchronous binding */
   static NAN_METHOD(Async);
-  /* Synchronous binding */
-  static NAN_METHOD(Sync);
 
  private:
   static void AsyncOperation(uv_work_t*);
@@ -104,8 +102,6 @@ class UncompressBinding : CompressUncompressBase {
  public:
   /* Asynchronous binding */
   static NAN_METHOD(Async);
-  /* Synchronous binding */
-  static NAN_METHOD(Sync);
 
  private:
   static void AsyncOperation(uv_work_t*);
@@ -119,8 +115,6 @@ class IsValidCompressedBinding : protected Base {
  public:
   /* Asynchronous binding */
   static NAN_METHOD(Async);
-  /* Synchronous binding */
-  static NAN_METHOD(Sync);
 
  private:
   static void After(uv_work_t*);

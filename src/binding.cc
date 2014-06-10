@@ -97,17 +97,6 @@ NAN_METHOD(CompressBinding::Async) {
   NanReturnUndefined();
 }
 
-NAN_METHOD(CompressBinding::Sync) {
-  NanScope();
-  v8::Local<v8::Object> input = args[0]->ToObject();
-  size_t length = node::Buffer::Length(input);
-  char *data = node::Buffer::Data(input);
-  std::string dst;
-  snappy::Compress(data, length, &dst);
-  CallOkCallback(v8::Local<v8::Function>::Cast(args[1]), dst);
-  NanReturnUndefined();
-}
-
 // PRIVATE
 void CompressBinding::AsyncOperation(uv_work_t *req) {
   SnappyRequest<std::string>* snappy_req =
@@ -126,21 +115,6 @@ NAN_METHOD(UncompressBinding::Async) {
   uv_work_t* _req = new uv_work_t;
   _req->data = snappy_req;
   uv_queue_work(uv_default_loop(), _req, AsyncOperation, (uv_after_work_cb)After);
-  NanReturnUndefined();
-}
-
-NAN_METHOD(UncompressBinding::Sync) {
-  NanScope();
-  std::string dst;
-  v8::Local<v8::Object> input = args[0]->ToObject();
-  size_t length = node::Buffer::Length(input);
-  char *data = node::Buffer::Data(input);
-  v8::Handle<v8::Function> callback = v8::Local<v8::Function>::Cast(args[1]);
-  if (snappy::Uncompress(data, length, &dst)) {
-    CallOkCallback(callback, dst);
-  } else {
-    CallErrCallback(callback, SnappyErrors::kInvalidInput);
-  }
   NanReturnUndefined();
 }
 
@@ -166,16 +140,6 @@ NAN_METHOD(IsValidCompressedBinding::Async) {
   uv_work_t* _req = new uv_work_t;
   _req->data = snappy_req;
   uv_queue_work(uv_default_loop(), _req, AsyncOperation, (uv_after_work_cb)After);
-  NanReturnUndefined();
-}
-
-NAN_METHOD(IsValidCompressedBinding::Sync) {
-  NanScope();
-  v8::Local<v8::Object> input = args[0]->ToObject();
-  size_t length = node::Buffer::Length(input);
-  char *data = node::Buffer::Data(input);
-  bool valid = snappy::IsValidCompressedBuffer(data, length);
-  CallOkCallback(v8::Local<v8::Function>::Cast(args[1]), valid);
   NanReturnUndefined();
 }
 
@@ -210,11 +174,8 @@ IsValidCompressedBinding::CallOkCallback(
 extern "C" void
 init(v8::Handle<v8::Object> exports) {
   NODE_SET_METHOD(exports, "compress", CompressBinding::Async);
-  NODE_SET_METHOD(exports, "compressSync", CompressBinding::Sync);
   NODE_SET_METHOD(exports, "uncompress", UncompressBinding::Async);
-  NODE_SET_METHOD(exports, "uncompressSync", UncompressBinding::Sync);
   NODE_SET_METHOD(exports, "isValidCompressed", IsValidCompressedBinding::Async);
-  NODE_SET_METHOD(exports, "isValidCompressedSync", IsValidCompressedBinding::Sync);
 }
 
 NODE_MODULE(binding, init)
