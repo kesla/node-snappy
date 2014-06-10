@@ -13,13 +13,13 @@
     "lib": "."
   },
   "scripts": {
-    "test": "tape test.js"
+    "test": "tap test.js"
   },
   "dependencies": {
     "bindings": "~1.1.1",
     "nan": "~1.2.0"
   },
   "devDependencies": {
-    "tap": "^0.4.11"
+    "tap": "~0.4.11"
   }
 }
