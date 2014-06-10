@@ -13,16 +13,13 @@
     "lib": "."
   },
   "scripts": {
-    "test": "vows --spec -i"
-  },
-  "engines": {
-    "node": ">= 0.4.5"
+    "test": "tape test.js"
   },
   "dependencies": {
     "bindings": "~1.1.1",
     "nan": "~1.0.0"
   },
   "devDependencies": {
-    "vows": "~0.7.0"
+    "tap": "^0.4.11"
   }
 }
