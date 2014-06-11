@@ -3,6 +3,8 @@ var snappy = require('snappy')
 
 module.exports = {
     createUncompressStream: function (opts) {
+      opts = opts || {}
+
       var asBuffer = opts.asBuffer
       if (typeof(asBuffer) !== 'boolean')
         asBuffer = true
@@ -14,7 +16,18 @@ module.exports = {
         // for now, just moving ahead
         chunk = chunk.slice(10)
 
-        if (chunk[0] === 1) {
+        if (chunk[0] === 0) {
+          // compressed data
+          // TODO: Check that the checksum matches
+          chunk = chunk.slice(8)
+
+          snappy.uncompress(chunk, opts, function (err, raw) {
+            console.log(typeof(raw))
+            self.push(raw)
+            callback(null)
+          })
+
+        } else if (chunk[0] === 1) {
           // uncompressed data
           // TODO: Check that the checksum matches
           chunk = chunk.slice(8)
