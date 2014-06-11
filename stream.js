@@ -3,48 +3,77 @@ var bufferEqual = require('buffer-equal')
   , through2 = require('through2')
 
   , IDENTIFIER = new Buffer([
-      0xff, 0x06, 0x00, 0x00, 0x73, 0x4e, 0x61, 0x50, 0x70, 0x59
+      0x73, 0x4e, 0x61, 0x50, 0x70, 0x59
     ])
+  , frameSize = function (buffer) {
+      return buffer[0] + (buffer[1] << 8) + (buffer[2] << 16)
+    }
+  , getType = function (value) {
+      if (value === 0xff)
+        return 'identifier'
+      if (value === 0x00)
+        return 'compressed'
+      if (value === 0x01)
+        return 'uncompressed'
+      // TODO: Handle the other cases described in the spec
+    }
 
 module.exports = {
     createUncompressStream: function (opts) {
       opts = opts || {}
 
-      var asBuffer = opts.asBuffer
-      if (typeof(asBuffer) !== 'boolean')
-        asBuffer = true
+      var asBuffer = typeof(opts.asBuffer) === 'boolean' ? opts.asBuffer : true
+        , buffer = new Buffer([])
+        , foundIdentifier = false
+        , stream = through2({ objectMode: !asBuffer }, function (chunk, enc, callback) {
+            buffer = Buffer.concat([buffer, chunk])
 
-      return through2({ objectMode: !asBuffer }, function (chunk, enc, callback) {
-        var self = this
-
-        if (!bufferEqual(chunk.slice(0, 10), IDENTIFIER))
-          return callback(new Error('Bad identifier'))
-
-        // move ahead after the identifier
-        chunk = chunk.slice(10)
-
-        if (chunk[0] === 0) {
-          // compressed data
-          // TODO: Check that the checksum matches
-          chunk = chunk.slice(8)
-
-          snappy.uncompress(chunk, opts, function (err, raw) {
-            console.log(typeof(raw))
-            self.push(raw)
-            callback(null)
+            parse(callback)
           })
+        , parse = function (callback) {
+            if (buffer.length < 4)
+              return callback()
 
-        } else if (chunk[0] === 1) {
-          // uncompressed data
-          // TODO: Check that the checksum matches
-          chunk = chunk.slice(8)
+            var size = frameSize(buffer.slice(1))
+              , type = getType(buffer[0])
+              , data = buffer.slice(4, 4 + size)
 
-          if (!asBuffer)
-            chunk = chunk.toString()
+            if (buffer.length - 4 < size)
+              return callback()
 
-          self.push(chunk)
-          callback(null)
-        }
-      })
+            buffer = buffer.slice(4 + size)
+
+            if (!foundIdentifier && type !== 'identifier')
+              return callback(new Error('malformed input: must begin with an identifier'))
+
+            if (type === 'identifier') {
+              if(!bufferEqual(data, IDENTIFIER))
+                return callback(new Error('malformed input: bad identifier'))
+
+              foundIdentifier = true
+              return parse(callback)
+            }
+
+            if (type === 'compressed') {
+              // TODO: check that the checksum matches
+              snappy.uncompress(data.slice(4), { asBuffer: asBuffer }, function (err, raw) {
+                stream.push(raw)
+                parse(callback)
+              })
+              return
+            }
+            if (type === 'uncompressed') {
+              // TODO: check that the checksum matches
+              data = data.slice(4)
+
+              if (!asBuffer)
+                data = data.toString()
+
+              stream.push(data)
+              parse(callback)
+            }
+          }
+
+      return stream
     }
 }

@@ -94,9 +94,58 @@ test('uncompress with bad identifier', function (t) {
   var uncompressStream = createUncompressStream()
 
   uncompressStream.on('error', function (err) {
-    t.deepEqual(err, new Error('Bad identifier'))
+    t.equal(err.message, 'malformed input: bad identifier')
     t.end()
   })
 
-  uncompressStream.write('beepboop')
+  uncompressStream.write(
+    new Buffer([ 0xff, 0x06, 0x00, 0x00, 0x73, 0x4e, 0x61, 0x50, 0x70, 0x60 ])
+  )
+  uncompressStream.end()
+})
+
+test('uncompress with bad first frame', function (t) {
+  var uncompressStream = createUncompressStream()
+
+  uncompressStream.on('error', function (err) {
+    t.equal(err.message, 'malformed input: must begin with an identifier')
+    t.end()
+  })
+
+  uncompressStream.write(
+    new Buffer([ 0x0, 0x06, 0x00, 0x00, 0x73, 0x4e, 0x61, 0x50, 0x70, 0x60 ])
+  )
+  uncompressStream.end()
+})
+
+test('uncompress large String in small pieces', function (t) {
+  var child = spawn('python', [ '-m', 'snappy', '-c' ])
+    , uncompressStream = createUncompressStream()
+    , data = []
+
+    uncompressStream.on('data', function (chunk) {
+      data.push(chunk)
+      t.ok(Buffer.isBuffer(chunk))
+    })
+
+    uncompressStream.on('end', function () {
+      t.deepEqual(Buffer.concat(data), largerInput)
+      t.end()
+    })
+
+  child.stdout.on('data', function (chunk) {
+    var i = 0;
+
+    while (i < chunk.length) {
+      uncompressStream.write(new Buffer([ chunk[i] ]))
+      i++
+    }
+  })
+
+  child.stdout.once('end', function () {
+    uncompressStream.end()
+  })
+
+  child.stdin.write(largerInput)
+  child.stdin.end()
 })
