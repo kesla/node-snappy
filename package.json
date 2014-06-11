@@ -17,6 +17,7 @@
     "tap": "^0.4.11"
   },
   "dependencies": {
+    "bl": "^0.8.0",
     "buffer-equal": "0.0.1",
     "snappy": "git://github.com/kesla/node-snappy#v3",
     "through2": "^0.5.1"

@@ -1,4 +1,5 @@
 var bufferEqual = require('buffer-equal')
+  , BufferList = require('bl')
   , snappy = require('snappy')
   , through2 = require('through2')
 
@@ -6,7 +7,7 @@ var bufferEqual = require('buffer-equal')
       0x73, 0x4e, 0x61, 0x50, 0x70, 0x59
     ])
   , frameSize = function (buffer) {
-      return buffer[0] + (buffer[1] << 8) + (buffer[2] << 16)
+      return buffer.get(0) + (buffer.get(1) << 8) + (buffer.get(2) << 16)
     }
   , getType = function (value) {
       if (value === 0xff)
@@ -23,10 +24,10 @@ module.exports = {
       opts = opts || {}
 
       var asBuffer = typeof(opts.asBuffer) === 'boolean' ? opts.asBuffer : true
-        , buffer = new Buffer([])
+        , buffer = new BufferList()
         , foundIdentifier = false
         , stream = through2({ objectMode: !asBuffer }, function (chunk, enc, callback) {
-            buffer = Buffer.concat([buffer, chunk])
+            buffer.append(chunk)
 
             parse(callback)
           })
@@ -35,13 +36,13 @@ module.exports = {
               return callback()
 
             var size = frameSize(buffer.slice(1))
-              , type = getType(buffer[0])
+              , type = getType(buffer.get(0))
               , data = buffer.slice(4, 4 + size)
 
             if (buffer.length - 4 < size)
               return callback()
 
-            buffer = buffer.slice(4 + size)
+            buffer.consume(4 + size)
 
             if (!foundIdentifier && type !== 'identifier')
               return callback(new Error('malformed input: must begin with an identifier'))
