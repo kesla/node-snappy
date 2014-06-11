@@ -4,7 +4,7 @@
   "description": "Compress data over a Stream using the snappy framing format",
   "main": "stream.js",
   "scripts": {
-    "test": "tap test.js"
+    "test": "tap test/*-test.js"
   },
   "keywords": [
     "snappy",

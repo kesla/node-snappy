@@ -1,12 +1,13 @@
 var spawn = require('child_process').spawn
 
+  , createUncompressStream = require('../stream').createUncompressStream
   , test = require('tap').test
-  , largerInput = require('fs').readFileSync(__dirname + '/test.js')
+  , largerInput = require('fs').readFileSync(__filename)
   , largerInputString = largerInput.toString()
 
 test('uncompress small string', function (t) {
   var child = spawn('python', [ '-m', 'snappy', '-c' ])
-    , uncompressStream = require('./stream').createUncompressStream({ asBuffer: false })
+    , uncompressStream = createUncompressStream({ asBuffer: false })
     , data = ''
 
   uncompressStream.on('data', function (chunk) {
@@ -27,7 +28,7 @@ test('uncompress small string', function (t) {
 
 test('uncompress small Buffer', function (t) {
   var child = spawn('python', [ '-m', 'snappy', '-c' ])
-    , uncompressStream = require('./stream').createUncompressStream()
+    , uncompressStream = createUncompressStream()
     , data = []
 
   uncompressStream.on('data', function (chunk) {
@@ -48,7 +49,7 @@ test('uncompress small Buffer', function (t) {
 
 test('uncompress large string', function (t) {
   var child = spawn('python', [ '-m', 'snappy', '-c' ])
-    , uncompressStream = require('./stream').createUncompressStream({ asBuffer: false })
+    , uncompressStream = createUncompressStream({ asBuffer: false })
     , data = ''
 
   uncompressStream.on('data', function (chunk) {
@@ -69,7 +70,7 @@ test('uncompress large string', function (t) {
 
 test('uncompress large string', function (t) {
   var child = spawn('python', [ '-m', 'snappy', '-c' ])
-    , uncompressStream = require('./stream').createUncompressStream()
+    , uncompressStream = createUncompressStream()
     , data = []
 
     uncompressStream.on('data', function (chunk) {
@@ -90,7 +91,7 @@ test('uncompress large string', function (t) {
 })
 
 test('uncompress with bad identifier', function (t) {
-  var uncompressStream = require('./stream').createUncompressStream()
+  var uncompressStream = createUncompressStream()
 
   uncompressStream.on('error', function (err) {
     t.deepEqual(err, new Error('Bad identifier'))
