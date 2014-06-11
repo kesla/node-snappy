@@ -1,0 +1,23 @@
+{
+  "name": "node-snappy-stream",
+  "version": "0.0.0",
+  "description": "Compress data over a Stream using the snappy framing format",
+  "main": "stream.js",
+  "scripts": {
+    "test": "tap test.js"
+  },
+  "keywords": [
+    "snappy",
+    "stream",
+    "framing"
+  ],
+  "author": "David Björklund <david.bjorklund@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "tap": "^0.4.11"
+  },
+  "dependencies": {
+    "snappy": "git://github.com/kesla/node-snappy#v3",
+    "through2": "^0.5.1"
+  }
+}
