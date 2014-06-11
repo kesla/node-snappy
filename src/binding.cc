@@ -128,21 +128,16 @@ class UncompressWorker : public NanAsyncWorker {
 NAN_METHOD(Compress) {
   NanScope();
 
-  size_t length;
-  const char *data;
   std::string *input;
 
   if (node::Buffer::HasInstance(args[0]->ToObject())) {
     v8::Handle<v8::Object> object = args[0]->ToObject();
-    length = node::Buffer::Length(object);
-    data = node::Buffer::Data(object);
+    size_t length = node::Buffer::Length(object);
+    const char *data = node::Buffer::Data(object);
     input = new std::string(data, length);
   } else {
-    // get the param
-     v8::String::Utf8Value param1(args[0]->ToString());
-
-     // convert it to string
-     input = new std::string(*param1); 
+    v8::String::Utf8Value param1(args[0]->ToString());
+    input = new std::string(*param1);
   }
 
   NanCallback* callback = new NanCallback(
@@ -187,7 +182,7 @@ NAN_METHOD(Uncompress) {
   size_t length = node::Buffer::Length(object);
   const char *data = node::Buffer::Data(object);
   std::string *input = new std::string(data, length);
-  bool asBuffer = NanBooleanOptionValue(optionsObj, NanNew("asBuffer"), true);
+  bool asBuffer = NanBooleanOptionValue(optionsObj, NanNew("asBuffer"));
 
   NanCallback* callback = new NanCallback(
     v8::Local<v8::Function>::Cast(args[2])
