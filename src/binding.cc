@@ -35,7 +35,9 @@ class CompressWorker : public NanAsyncWorker {
     CompressWorker(std::string* input, NanCallback *callback)
       : NanAsyncWorker(callback), input(input) {}
 
-    ~CompressWorker() {}
+    ~CompressWorker() {
+      delete input;
+    }
 
     void Execute() {
       snappy::Compress(input->data(), input->length(), &dst);
@@ -53,7 +55,6 @@ class CompressWorker : public NanAsyncWorker {
       };
 
       callback->Call(2, argv);
-      delete input;
     }
 
   private:
@@ -65,7 +66,9 @@ class IsValidCompressedWorker : public NanAsyncWorker {
   public: IsValidCompressedWorker(std::string* input, NanCallback * callback)
     : NanAsyncWorker(callback), input(input) {}
 
-  ~IsValidCompressedWorker() {}
+  ~IsValidCompressedWorker() {
+    delete input;
+  }
 
   void Execute() {
     res = snappy::IsValidCompressedBuffer(input->data(), input->length());
@@ -80,7 +83,6 @@ class IsValidCompressedWorker : public NanAsyncWorker {
     };
 
     callback->Call(2, argv);
-    delete input;
   }
 
   private:
@@ -93,7 +95,9 @@ class UncompressWorker : public NanAsyncWorker {
     UncompressWorker(std::string* input, bool asBuffer, NanCallback *callback)
       : NanAsyncWorker(callback), input(input), asBuffer(asBuffer) {}
 
-    ~UncompressWorker() {}
+    ~UncompressWorker() {
+      delete input;
+    }
 
     void Execute() {
       snappy::Uncompress(input->data(), input->length(), &dst);
@@ -116,7 +120,6 @@ class UncompressWorker : public NanAsyncWorker {
       };
 
       callback->Call(2, argv);
-      delete input;
     }
 
   private:
