@@ -1,5 +1,10 @@
-var snappy = require('snappy')
+var bufferEqual = require('buffer-equal')
+  , snappy = require('snappy')
   , through2 = require('through2')
+
+  , IDENTIFIER = new Buffer([
+      0xff, 0x06, 0x00, 0x00, 0x73, 0x4e, 0x61, 0x50, 0x70, 0x59
+    ])
 
 module.exports = {
     createUncompressStream: function (opts) {
@@ -12,8 +17,10 @@ module.exports = {
       return through2({ objectMode: !asBuffer }, function (chunk, enc, callback) {
         var self = this
 
-        // TODO: Check that the identifier is correct
-        // for now, just moving ahead
+        if (!bufferEqual(chunk.slice(0, 10), IDENTIFIER))
+          return callback(new Error('Bad identifier'))
+
+        // move ahead after the identifier
         chunk = chunk.slice(10)
 
         if (chunk[0] === 0) {

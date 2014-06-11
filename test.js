@@ -88,3 +88,14 @@ test('uncompress large string', function (t) {
   child.stdin.write(largerInput)
   child.stdin.end()
 })
+
+test('uncompress with bad identifier', function (t) {
+  var uncompressStream = require('./stream').createUncompressStream()
+
+  uncompressStream.on('error', function (err) {
+    t.deepEqual(err, new Error('Bad identifier'))
+    t.end()
+  })
+
+  uncompressStream.write('beepboop')
+})
