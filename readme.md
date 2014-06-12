@@ -12,6 +12,20 @@ Compress data over a Stream using the snappy framing format
 npm install snappy-stream
 ```
 
+## Benchmark
+
+`snappy` is notably faster than gzip (as can be seen in [benchmarks](https://github.com/kesla/node-snappy#benchmark)).
+
+`snappy-stream` however is only _slightly_ faster than gzip, because of the overhead of creating a Stream to begin with.
+
+This is the result I'm seeing on my laptop (Macbook Air from 2012) running `node benchmark` (for now only testing compression)
+
+```
+  passthrough stream (no compression) x 644 ops/sec ±0.90% (84 runs sampled)
+  zlib.createGzip() x 667 ops/sec ±0.50% (89 runs sampled)
+  snappyStream.createCompressStream() x 690 ops/sec ±0.89% (86 runs sampled)
+```
+
 ## Example
 
 ### Input

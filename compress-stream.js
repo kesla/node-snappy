@@ -35,9 +35,9 @@ CompressStream.prototype._compressed = function (chunk, compressed) {
         COMPRESSED
       , frameSize(compressed.length + 4)
       , checksum(chunk)
+      , compressed
     ])
   )
-  this.push(compressed)
 }
 
 CompressStream.prototype._uncompressed = function (chunk) {
@@ -46,9 +46,9 @@ CompressStream.prototype._uncompressed = function (chunk) {
         UNCOMPRESSED
       , frameSize(chunk.length + 4)
       , checksum(chunk)
+      , chunk
     ])
   )
-  this.push(chunk)
 }
 
 CompressStream.prototype._transform = function (chunk, enc, callback) {
