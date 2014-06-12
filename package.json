@@ -20,7 +20,6 @@
     "bl": "^0.8.0",
     "buffer-equal": "0.0.1",
     "fast-crc23c": "^0.1.3",
-    "snappy": "git://github.com/kesla/node-snappy#v3",
-    "through2": "^0.5.1"
+    "snappy": "git://github.com/kesla/node-snappy#v3"
   }
 }

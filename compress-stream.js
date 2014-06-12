@@ -22,11 +22,34 @@ var Transform = require('stream').Transform
         return new CompressStream()
 
       Transform.call(this)
+
+      // first push the identifier frame
       this.push(IDENTIFIER_FRAME)
     }
 
 util.inherits(CompressStream, Transform)
 
+CompressStream.prototype._compressed = function (chunk, compressed) {
+  this.push(
+    Buffer.concat([
+        COMPRESSED
+      , frameSize(compressed.length + 4)
+      , checksum(chunk)
+    ])
+  )
+  this.push(compressed)
+}
+
+CompressStream.prototype._uncompressed = function (chunk) {
+  this.push(
+    Buffer.concat([
+        UNCOMPRESSED
+      , frameSize(chunk.length + 4)
+      , checksum(chunk)
+    ])
+  )
+  this.push(chunk)
+}
 
 CompressStream.prototype._transform = function (chunk, enc, callback) {
   var self = this
@@ -35,17 +58,11 @@ CompressStream.prototype._transform = function (chunk, enc, callback) {
     if (err)
       return callback(err)
 
-    if (compressed.length < chunk.length) {
-      self.push(COMPRESSED)
-      self.push(frameSize(compressed.length + 4))
-      self.push(checksum(chunk))
-      self.push(compressed)
-    } else {
-      self.push(UNCOMPRESSED)
-      self.push(frameSize(chunk.length + 4))
-      self.push(checksum(chunk))
-      self.push(chunk)
-    }
+    if (compressed.length < chunk.length)
+      self._compressed(chunk, compressed)
+    else
+      self._uncompressed(chunk)
+
     callback()
   })
 }
