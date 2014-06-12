@@ -32,13 +32,15 @@ namespace nodesnappy {
 
 class CompressWorker : public NanAsyncWorker {
   public:
-    CompressWorker(const char *data, size_t length, NanCallback *callback)
-      : NanAsyncWorker(callback), input(data, length) {}
+    CompressWorker(std::string* input, NanCallback *callback)
+      : NanAsyncWorker(callback), input(input) {}
 
-    ~CompressWorker() {}
+    ~CompressWorker() {
+      delete input;
+    }
 
     void Execute() {
-      snappy::Compress(input.data(), input.length(), &dst);
+      snappy::Compress(input->data(), input->length(), &dst);
     }
 
     void HandleOKCallback() {
@@ -56,18 +58,20 @@ class CompressWorker : public NanAsyncWorker {
     }
 
   private:
-    std::string input;
+    std::string* input;
     std::string dst;
 };
 
 class IsValidCompressedWorker : public NanAsyncWorker {
-  public: IsValidCompressedWorker(const char *data, size_t length, NanCallback * callback)
-    : NanAsyncWorker(callback), input(data, length) {}
+  public: IsValidCompressedWorker(std::string* input, NanCallback * callback)
+    : NanAsyncWorker(callback), input(input) {}
 
-  ~IsValidCompressedWorker() {}
+  ~IsValidCompressedWorker() {
+    delete input;
+  }
 
   void Execute() {
-    res = snappy::IsValidCompressedBuffer(input.data(), input.length());
+    res = snappy::IsValidCompressedBuffer(input->data(), input->length());
   }
 
   void HandleOKCallback() {
@@ -82,19 +86,21 @@ class IsValidCompressedWorker : public NanAsyncWorker {
   }
 
   private:
-    std::string input;
+    std::string* input;
     bool res;
 };
 
 class UncompressWorker : public NanAsyncWorker {
   public:
-    UncompressWorker(const char *data, size_t length, bool asBuffer, NanCallback *callback)
-      : NanAsyncWorker(callback), input(data, length), asBuffer(asBuffer) {}
+    UncompressWorker(std::string* input, bool asBuffer, NanCallback *callback)
+      : NanAsyncWorker(callback), input(input), asBuffer(asBuffer) {}
 
-    ~UncompressWorker() {}
+    ~UncompressWorker() {
+      delete input;
+    }
 
     void Execute() {
-      if (!snappy::Uncompress(input.data(), input.length(), &dst))
+      if (!snappy::Uncompress(input->data(), input->length(), &dst))
         SetErrorMessage("Invalid input");
     }
 
@@ -118,7 +124,7 @@ class UncompressWorker : public NanAsyncWorker {
     }
 
   private:
-    std::string input;
+    std::string* input;
     std::string dst;
     bool asBuffer;
 };
@@ -126,17 +132,16 @@ class UncompressWorker : public NanAsyncWorker {
 NAN_METHOD(Compress) {
   NanScope();
 
-  size_t length;
-  const char *data;
+  std::string *input;
 
   if (node::Buffer::HasInstance(args[0]->ToObject())) {
     v8::Handle<v8::Object> object = args[0]->ToObject();
-    data = node::Buffer::Data(object);
-    length = node::Buffer::Length(object);
+    size_t length = node::Buffer::Length(object);
+    const char *data = node::Buffer::Data(object);
+    input = new std::string(data, length);
   } else {
     v8::String::Utf8Value param1(args[0]->ToString());
-    data = *param1;
-    length = strlen(data);
+    input = new std::string(*param1);
   }
 
   NanCallback* callback = new NanCallback(
@@ -144,7 +149,7 @@ NAN_METHOD(Compress) {
   );
 
   CompressWorker* worker = new CompressWorker(
-      data, length, callback
+      input, callback
   );
 
   NanAsyncQueueWorker(worker);
@@ -158,13 +163,14 @@ NAN_METHOD(IsValidCompressed) {
   v8::Handle<v8::Object> object = args[0]->ToObject();
   size_t length = node::Buffer::Length(object);
   const char *data = node::Buffer::Data(object);
+  std::string *input = new std::string(data, length);
 
   NanCallback* callback = new NanCallback(
     v8::Local<v8::Function>::Cast(args[1])
   );
 
   IsValidCompressedWorker* worker = new IsValidCompressedWorker(
-      data, length, callback
+      input, callback
   );
 
   NanAsyncQueueWorker(worker);
@@ -179,6 +185,7 @@ NAN_METHOD(Uncompress) {
   v8::Local<v8::Object> optionsObj = args[1].As<v8::Object>();
   size_t length = node::Buffer::Length(object);
   const char *data = node::Buffer::Data(object);
+  std::string *input = new std::string(data, length);
   bool asBuffer = NanBooleanOptionValue(optionsObj, NanNew("asBuffer"));
 
   NanCallback* callback = new NanCallback(
@@ -186,7 +193,7 @@ NAN_METHOD(Uncompress) {
   );
 
   UncompressWorker* worker = new UncompressWorker(
-      data, length, asBuffer, callback
+      input, asBuffer, callback
   );
 
   NanAsyncQueueWorker(worker);
