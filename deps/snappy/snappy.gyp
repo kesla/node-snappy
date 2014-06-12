@@ -18,7 +18,7 @@
     ]
   , 'direct_dependent_settings': {
         'include_dirs': [
-            'snappy-1.1.1'
+            'snappy-1.1.2'
         ]
     }
   , 'defines': [
@@ -66,12 +66,12 @@
         }]
     ]
   , 'sources': [
-        'snappy-1.1.1/snappy-internal.h'
-      , 'snappy-1.1.1/snappy-sinksource.cc'
-      , 'snappy-1.1.1/snappy-sinksource.h'
-      , 'snappy-1.1.1/snappy-stubs-internal.cc'
-      , 'snappy-1.1.1/snappy-stubs-internal.h'
-      , 'snappy-1.1.1/snappy.cc'
-      , 'snappy-1.1.1/snappy.h'
+        'snappy-1.1.2/snappy-internal.h'
+      , 'snappy-1.1.2/snappy-sinksource.cc'
+      , 'snappy-1.1.2/snappy-sinksource.h'
+      , 'snappy-1.1.2/snappy-stubs-internal.cc'
+      , 'snappy-1.1.2/snappy-stubs-internal.h'
+      , 'snappy-1.1.2/snappy.cc'
+      , 'snappy-1.1.2/snappy.h'
     ]
 }]}

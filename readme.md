@@ -40,30 +40,30 @@ snappy.compress({"foo": "bar"}, function(err, compressed){
 ```
 
 ## API
-### snappy.compress(input, cb)
+### snappy.compress(input, callback)
 
-Compress `input`, which can be a Buffer, String or arbitrary JavaScript object and call `cb` with `err` and `compressed`.
+Compress `input`, which can be a `Buffer` or a `String`.
 
-### snappy.compressSync(input)
+The `callback` function will be called with a single `error` if the operation failed for any reason. If successful the first argument will be `null` and the second argument will be the `value` as a ``Buffer`.
 
-Compress `input`, which can be a Buffer, String or arbitrary JavaScript object and return `compressed`. Throws if an error occurs.
+### snappy.uncompress(compressed[, options] callback)
 
-### snappy.decompress(compressed, parse, cb)
+Uncompress `compressed` and call `callback` with `err` and `decompressed`.
 
-Decompress `compressed` using `parse` as parser (defaults to `raw`) and call `cb` with `err` and `decompressed`.
+#### `options`
 
-### snappy.decompressSync(str, parse)
+* `'asBuffer'` *(boolean, default: `true`)*: Used to determine whether to return the `value` of the entry as a `String` or a Node.js `Buffer` object. Note that converting from a `Buffer` to a `String` incurs a cost so if you need a `String` (and the `value` can legitimately become a UFT8 string) then you should fetch it as one with `asBuffer: true` and you'll avoid this conversion cost.
 
-Decompress `compressed` using `parse` as parser (defaults to `raw`) and return `decompressed`. Throws if an error occurs.
+The `callback` function will be called with a single `error` if the operation failed for any reason. If successful the first argument will be `null` and the second argument will be the `value` as a `String` or `Buffer` depending on the `asBuffer` option.
 
-## Parsers
+### snappy.isValidCompressed(input, callback)
 
-* json
-* string
-* raw
+Check is input is a valid compressed `Buffer`.
+
+The `callback` function will be called with a single `error` if the operation failed for any reason and the second argument will be `true` if input is a valid snappy compressed Buffer, `false` otherwise.
 
 ## License
-Copyright (c) 2013 David Björklund
+Copyright (c) 2011 - 2014 David Björklund & contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
