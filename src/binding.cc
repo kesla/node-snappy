@@ -100,7 +100,8 @@ class UncompressWorker : public NanAsyncWorker {
     }
 
     void Execute() {
-      snappy::Uncompress(input->data(), input->length(), &dst);
+      if (!snappy::Uncompress(input->data(), input->length(), &dst))
+        SetErrorMessage("Invalid input");
     }
 
     void HandleOKCallback() {

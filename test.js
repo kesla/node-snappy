@@ -40,8 +40,6 @@ test('isValidCompressed() on invalid data', function (t) {
   })
 })
 
-// For now commented out since things are a bit broken :(
-
 test('uncompress() defaults to Buffer', function (t) {
   snappy.uncompress(compressed, function (err, buffer) {
     t.error(err)
@@ -62,6 +60,13 @@ test('uncompress() returning a String', function (t) {
   snappy.uncompress(compressed, { asBuffer: false }, function (err, buffer) {
     t.error(err)
     t.deepEqual(buffer, inputString)
+    t.end()
+  })
+})
+
+test('uncompress() on bad input', function (t) {
+  snappy.uncompress(new Buffer('beep boop OMG OMG OMG'), function (err) {
+    t.equal(err.message, 'Invalid input')
     t.end()
   })
 })
