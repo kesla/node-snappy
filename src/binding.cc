@@ -33,16 +33,12 @@ namespace nodesnappy {
 class CompressWorker : public NanAsyncWorker {
   public:
     CompressWorker(const char *data, size_t length, NanCallback *callback)
-      : NanAsyncWorker(callback) {
-        input = new std::string(data, length);
-      }
+      : NanAsyncWorker(callback), input(data, length) {}
 
-    ~CompressWorker() {
-      delete input;
-    }
+    ~CompressWorker() {}
 
     void Execute() {
-      snappy::Compress(input->data(), input->length(), &dst);
+      snappy::Compress(input.data(), input.length(), &dst);
     }
 
     void HandleOKCallback() {
@@ -60,22 +56,18 @@ class CompressWorker : public NanAsyncWorker {
     }
 
   private:
-    std::string* input;
+    std::string input;
     std::string dst;
 };
 
 class IsValidCompressedWorker : public NanAsyncWorker {
   public: IsValidCompressedWorker(const char *data, size_t length, NanCallback * callback)
-    : NanAsyncWorker(callback) {
-      input = new std::string(data, length);
-    }
+    : NanAsyncWorker(callback), input(data, length) {}
 
-  ~IsValidCompressedWorker() {
-    delete input;
-  }
+  ~IsValidCompressedWorker() {}
 
   void Execute() {
-    res = snappy::IsValidCompressedBuffer(input->data(), input->length());
+    res = snappy::IsValidCompressedBuffer(input.data(), input.length());
   }
 
   void HandleOKCallback() {
@@ -90,21 +82,19 @@ class IsValidCompressedWorker : public NanAsyncWorker {
   }
 
   private:
-    std::string* input;
+    std::string input;
     bool res;
 };
 
 class UncompressWorker : public NanAsyncWorker {
   public:
     UncompressWorker(const char *data, size_t length, bool asBuffer, NanCallback *callback)
-      : NanAsyncWorker(callback), asBuffer(asBuffer) {
-        input = new std::string(data, length);
-      }
+      : NanAsyncWorker(callback), input(data, length), asBuffer(asBuffer) {}
 
     ~UncompressWorker() {}
 
     void Execute() {
-      if (!snappy::Uncompress(input->data(), input->length(), &dst))
+      if (!snappy::Uncompress(input.data(), input.length(), &dst))
         SetErrorMessage("Invalid input");
     }
 
@@ -128,7 +118,7 @@ class UncompressWorker : public NanAsyncWorker {
     }
 
   private:
-    std::string* input;
+    std::string input;
     std::string dst;
     bool asBuffer;
 };
