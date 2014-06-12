@@ -16,6 +16,17 @@ Snappy is widely used inside Google, in everything from BigTable and MapReduce t
   npm install snappy
 ```
 
+## Benchmark
+
+This is the result I'm seeing on my laptop (Macbook Air from 2012) running `node benchmark`
+
+```
+  snappy.compress() x 479 ops/sec ±0.99% (80 runs sampled)
+  zlib.gzip() x 289 ops/sec ±1.66% (86 runs sampled)
+  snappy.uncompress() x 652 ops/sec ±0.86% (43 runs sampled)
+  zlib.gunzip() x 559 ops/sec ±1.65% (64 runs sampled)
+```
+
 ## Examples
 ### String
 ```js
