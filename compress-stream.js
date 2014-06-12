@@ -17,34 +17,37 @@ var Transform = require('stream').Transform
       ])
     }
 
-  , createCompressStream = function () {
-      var stream = new Transform()
+  , CompressStream = function () {
+      if (!(this instanceof CompressStream))
+        return new CompressStream()
 
-      stream.push(IDENTIFIER_FRAME)
-
-      stream._transform = function (chunk, enc, callback) {
-        var self = this
-
-        snappy.compress(chunk, function (err, compressed) {
-          if (err)
-            return callback(err)
-
-          if (compressed.length < chunk.length) {
-            self.push(COMPRESSED)
-            self.push(frameSize(compressed.length + 4))
-            self.push(checksum(chunk))
-            self.push(compressed)
-          } else {
-            self.push(UNCOMPRESSED)
-            self.push(frameSize(chunk.length + 4))
-            self.push(checksum(chunk))
-            self.push(chunk)
-          }
-          callback()
-        })
-      }
-
-      return stream
+      Transform.call(this)
+      this.push(IDENTIFIER_FRAME)
     }
 
-module.exports = createCompressStream
+util.inherits(CompressStream, Transform)
+
+
+CompressStream.prototype._transform = function (chunk, enc, callback) {
+  var self = this
+
+  snappy.compress(chunk, function (err, compressed) {
+    if (err)
+      return callback(err)
+
+    if (compressed.length < chunk.length) {
+      self.push(COMPRESSED)
+      self.push(frameSize(compressed.length + 4))
+      self.push(checksum(chunk))
+      self.push(compressed)
+    } else {
+      self.push(UNCOMPRESSED)
+      self.push(frameSize(chunk.length + 4))
+      self.push(checksum(chunk))
+      self.push(chunk)
+    }
+    callback()
+  })
+}
+
+module.exports = CompressStream
