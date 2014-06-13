@@ -1,0 +1,8 @@
+language: node_js
+node_js:
+  - "0.10"
+  - "0.11"
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install libsnappy-dev
+  - sudo pip install python-snappy
