@@ -1,4 +1,4 @@
-# snappy-stream
+# snappy-stream[![build status](https://secure.travis-ci.org/kesla/node-snappy-stream.png)](http://travis-ci.org/kesla/node-snappy-stream)
 
 Compress data over a Stream using the snappy framing format
 
@@ -56,19 +56,23 @@ compressStream.end()
 
 ```
 Som data from the compressed stream <Buffer ff 06 00 00 73 4e 61 50 70 59>
-Som data from the compressed stream <Buffer 01 09 00 00 bb 1f 82 a2>
-Som data from the compressed stream <Buffer 68 65 6c 6c 6f>
+Som data from the compressed stream <Buffer 01 09 00 00 bb 1f 82 a2 68 65 6c 6c 6f>
 The data that was originally written
 hello
-Som data from the compressed stream <Buffer 01 09 00 00 2d 4e 1f a5>
-Som data from the compressed stream <Buffer 77 6f 72 6c 64>
+Som data from the compressed stream <Buffer 01 09 00 00 2d 4e 1f a5 77 6f 72 6c 64>
 The data that was originally written
 world
 ```
 
 ## Running tests
 
-The tests are using the [https://pypi.python.org/pypi/python-snappy](python-snappy) library, so you need to install that first for it to work.
+The tests are using the [https://pypi.python.org/pypi/python-snappy](python-snappy) library, so you need to install that first for it to work:
+
+```
+[sudo] pip install python-snappy
+```
+
+You also need to install the snappy library on your machine, using your favourite package manager (e.g. `sudo apt-get install libsnappy-dev` or `brew install snappy`).
 
 ## Licence
 
