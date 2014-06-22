@@ -1,6 +1,6 @@
 {
   "name": "snappy-stream",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Compress data over a Stream using the snappy framing format",
   "main": "stream.js",
   "scripts": {
