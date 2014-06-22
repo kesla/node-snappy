@@ -11,12 +11,6 @@ var Transform = require('stream').Transform
   , COMPRESSED = new Buffer([ 0x00 ])
   , UNCOMPRESSED = new Buffer([ 0x01 ])
 
-  , frameSize = function (value) {
-      return new Buffer([
-        value, value >> 8, value >> 16
-      ])
-    }
-
   , CompressStream = function () {
       if (!(this instanceof CompressStream))
         return new CompressStream()
@@ -30,10 +24,12 @@ var Transform = require('stream').Transform
 util.inherits(CompressStream, Transform)
 
 CompressStream.prototype._compressed = function (chunk, compressed) {
+  var size = compressed.length + 4
+
   this.push(
     Buffer.concat([
         COMPRESSED
-      , frameSize(compressed.length + 4)
+      , new Buffer([ size, size >> 8, size >> 16 ])
       , checksum(chunk)
       , compressed
     ])
@@ -41,10 +37,12 @@ CompressStream.prototype._compressed = function (chunk, compressed) {
 }
 
 CompressStream.prototype._uncompressed = function (chunk) {
+  var size = chunk.length + 4
+
   this.push(
     Buffer.concat([
         UNCOMPRESSED
-      , frameSize(chunk.length + 4)
+      , new Buffer([ size, size >> 8, size >> 16 ])
       , checksum(chunk)
       , chunk
     ])
