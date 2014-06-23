@@ -1,6 +1,10 @@
-# Node-snappy [![Build Status](https://secure.travis-ci.org/kesla/node-snappy.png)](http://travis-ci.org/kesla/node-snappy)
+# snappy[![build status](https://secure.travis-ci.org/kesla/node-snappy.svg)](http://travis-ci.org/kesla/node-snappy)
 
-[![NPM](https://nodei.co/npm/snappy.png?downloads)](https://nodei.co/npm/snappy/)
+Nodejs bindings to Google's Snappy compression library
+
+[![NPM](https://nodei.co/npm/snappy.png?downloads&stars)](https://nodei.co/npm/snappy/)
+
+[![NPM](https://nodei.co/npm-dl/snappy.png)](https://nodei.co/npm/snappy/)
 
 ## About
 
@@ -13,44 +17,34 @@ Snappy is widely used inside Google, in everything from BigTable and MapReduce t
 ## Installation
 
 ```
-  npm install snappy
+npm install snappy
 ```
 
-## Benchmark
+## Example
 
-This is the result I'm seeing on my laptop (Macbook Air from 2012) running `node benchmark`
+### Input
 
-```
-  snappy.compress() x 479 ops/sec ±0.99% (80 runs sampled)
-  zlib.gzip() x 289 ops/sec ±1.66% (86 runs sampled)
-  snappy.uncompress() x 652 ops/sec ±0.86% (43 runs sampled)
-  zlib.gunzip() x 559 ops/sec ±1.65% (64 runs sampled)
-```
+```javascript
+var snappy = require('./snappy')
 
-## Examples
-### String
-```js
-var snappy = require('snappy');
-// Use synchronous version
-var compressed = snappy.compressSync('string to compress');
-var result = snappy.decompressSync(compressed, snappy.parsers.string);
-// result will be string instead of Buffer
-console.log(result);
+snappy.compress('beep boop', function (err, compressed) {
+  console.log('compressed is a Buffer', compressed)
+  // return it as a string
+  snappy.uncompress(compressed, { asBuffer: false }, function (err, original) {
+    console.log('the original String', original)
+  })
+})
 ```
 
-### JSON
-```js
-var snappy = require('snappy');
-// Snappy automatically convert json to a string
-snappy.compress({"foo": "bar"}, function(err, compressed){
-  snappy.decompress(compressed, snappy.parsers.json, function(err, result){
-    // result will be json instead of Buffer
-    console.log(result["foo"]);
-  });
-});
+### Output
+
+```
+compressed is a Buffer <SlowBuffer 09 20 62 65 65 70 20 62 6f 6f 70>
+the original String beep boop
 ```
 
 ## API
+
 ### snappy.compress(input, callback)
 
 Compress `input`, which can be a `Buffer` or a `String`.
@@ -73,7 +67,19 @@ Check is input is a valid compressed `Buffer`.
 
 The `callback` function will be called with a single `error` if the operation failed for any reason and the second argument will be `true` if input is a valid snappy compressed Buffer, `false` otherwise.
 
+## Benchmark
+
+This is the result I'm seeing on my laptop (Macbook Air from 2012) running `node benchmark`
+
+```
+  snappy.compress() x 479 ops/sec ±0.99% (80 runs sampled)
+  zlib.gzip() x 289 ops/sec ±1.66% (86 runs sampled)
+  snappy.uncompress() x 652 ops/sec ±0.86% (43 runs sampled)
+  zlib.gunzip() x 559 ops/sec ±1.65% (64 runs sampled)
+```
+
 ## License
+
 Copyright (c) 2011 - 2014 David Björklund & contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

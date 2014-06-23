@@ -8,10 +8,7 @@
     "type": "git",
     "url": "git://github.com/kesla/node-snappy.git"
   },
-  "main": "lib/snappy.js",
-  "directories": {
-    "lib": "."
-  },
+  "main": "snappy.js",
   "scripts": {
     "test": "tap test.js"
   },

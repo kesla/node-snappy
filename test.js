@@ -1,6 +1,6 @@
 var test = require('tap').test
 
-  , snappy = require('./lib/snappy')
+  , snappy = require('./snappy')
 
   , inputString = 'beep boop, hello world. OMG OMG OMG'
   , inputBuffer = new Buffer(inputString)
