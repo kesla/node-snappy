@@ -2,7 +2,7 @@ var zlib = require('zlib')
 
   , benchmark = require('async-benchmark')
 
-  , snappy = require('./lib/snappy')
+  , snappy = require('./snappy')
   , input = require('fs').readFileSync(
       __dirname + '/deps/snappy/snappy-1.1.2/snappy.cc'
     )
