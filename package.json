@@ -10,7 +10,8 @@
   },
   "main": "snappy.js",
   "scripts": {
-    "test": "tap test.js"
+    "test": "tap test.js",
+    "install": "node-gyp rebuild"
   },
   "dependencies": {
     "bindings": "~1.1.1",
@@ -19,5 +20,10 @@
   "devDependencies": {
     "async-benchmark": "~1.0.0",
     "tap": "~0.4.11"
-  }
+  },
+  "gypfile": true,
+  "bugs": {
+    "url": "https://github.com/kesla/node-snappy/issues"
+  },
+  "license": "MIT"
 }
