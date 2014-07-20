@@ -1,7 +1,9 @@
-var zlib = require('zlib')
+var util = require('util')
+  , zlib = require('zlib')
 
   , benchmark = require('async-benchmark')
   , bytes = require('bytes')
+  , chalk = require('chalk')
 
   , snappy = require('../snappy')
   , input = require('fs').readFileSync(
@@ -33,20 +35,22 @@ var zlib = require('zlib')
       gzip.end()
     }
 
-console.log('input size', bytes(input.length))
+console.log(chalk.underline(util.format('input size %s', bytes(input.length))))
+console.log()
 require('run-series')([
     function (done) {
       benchmark(
           'snappy.compress()'
         , snappy.compress.bind(snappy, input)
         , function (err, event) {
-            console.log(event.target.toString())
+            console.log(chalk.blue(event.target.toString()))
             snappy.compress(input, function (err, compressed) {
-              console.log(
-                  'compressed size'
+              var str = util.format(
+                  'compressed size %s (%s%)'
                 , bytes(compressed.length)
-                , '(' + round(compressed.length / input.length * 100) + '%)'
+                , round(compressed.length / input.length * 100)
               )
+              console.log(chalk.blue(str))
               done()
             })
           }
@@ -57,13 +61,14 @@ require('run-series')([
           'zlib.gzip()'
         , zlib.gzip.bind(zlib, input)
         , function (err, event) {
-            console.log(event.target.toString())
+            console.log(chalk.yellow(event.target.toString()))
             zlib.gzip(input, function (err, compressed) {
-              console.log(
-                  'compressed size'
+              var str = util.format(
+                  'compressed size %s (%s%)'
                 , bytes(compressed.length)
-                , '(' + round(compressed.length / input.length * 100) + '%)'
+                , round(compressed.length / input.length * 100)
               )
+              console.log(chalk.yellow(str))
               done()
             })
           }
@@ -74,13 +79,15 @@ require('run-series')([
           'zlib.Gzip with custom options'
         , customGzip
         , function (err, event) {
-            console.log(event.target.toString())
+            console.log(chalk.magenta(event.target.toString()))
             customGzip(function (err, compressed) {
-              console.log(
-                  'compressed size'
+              var str = util.format(
+                  'compressed size %s (%s%)'
                 , bytes(compressed.length)
-                , '(' + round(compressed.length / input.length * 100) + '%)'
+                , round(compressed.length / input.length * 100)
               )
+              console.log(chalk.magenta(str))
+              console.log()
               done()
             })
           }
@@ -92,7 +99,7 @@ require('run-series')([
             'snappy.uncompress()'
           , snappy.uncompress.bind(snappy, compressed)
           , function (err, event) {
-              console.log(event.target.toString())
+              console.log(chalk.blue(event.target.toString()))
               done()
             }
         )
@@ -104,7 +111,7 @@ require('run-series')([
             'zlib.gunzip()'
           , zlib.gunzip.bind(zlib, compressed)
           , function (err, event) {
-              console.log(event.target.toString())
+              console.log(chalk.yellow(event.target.toString()))
               done()
             }
         )

@@ -2,6 +2,7 @@
   "dependencies": {
     "async-benchmark": "^1.0.0",
     "bytes": "^1.0.0",
+    "chalk": "^0.5.1",
     "run-series": "^1.0.2"
   }
 }
