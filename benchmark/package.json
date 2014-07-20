@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "async-benchmark": "^1.0.0",
+    "bytes": "^1.0.0",
+    "run-series": "^1.0.2"
+  }
+}

@@ -7,5 +7,6 @@ build/*
 /deps/libsnappy/Makefile
 /deps/libsnappy/stamp-h1
 /deps/libsnappy/.deps/*
-node_modules/*
+**/node_modules/*
+
 /npm-debug.log

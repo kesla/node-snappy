@@ -18,7 +18,6 @@
     "nan": "~1.2.0"
   },
   "devDependencies": {
-    "async-benchmark": "~1.0.0",
     "tap": "~0.4.11"
   },
   "gypfile": true,
