@@ -1,18 +1,11 @@
 # snappy[![build status](https://secure.travis-ci.org/kesla/node-snappy.svg)](http://travis-ci.org/kesla/node-snappy)
 
-Nodejs bindings to Google's Snappy compression library
+Nodejs bindings to the [snappy](github.com/google/snappy) compression library
 
 [![NPM](https://nodei.co/npm/snappy.png?downloads&stars)](https://nodei.co/npm/snappy/)
 
 [![NPM](https://nodei.co/npm-dl/snappy.png)](https://nodei.co/npm/snappy/)
 
-## About
-
-Node module/wrapper for Google's fast compressor/decompressor: <http://code.google.com/p/snappy/>
-
-Snappy is a compression/decompression library. It does not aim for maximum compression, or compatibility with any other compression library; instead, it aims for very high speeds and reasonable compression. For instance, compared to the fastest mode of zlib, Snappy is an order of magnitude faster for most inputs, but the resulting compressed files are anywhere from 20% to 100% bigger. On a single core of a Core i7 processor in 64-bit mode, Snappy compresses at about 250 MB/sec or more and decompresses at about 500 MB/sec or more.
-
-Snappy is widely used inside Google, in everything from BigTable and MapReduce to our internal RPC systems. (Snappy has previously been referred to as “Zippy” in some presentations and the likes.)
 
 ## Installation
 
@@ -66,6 +59,10 @@ The `callback` function will be called with a single `error` if the operation fa
 Check is input is a valid compressed `Buffer`.
 
 The `callback` function will be called with a single `error` if the operation failed for any reason and the second argument will be `true` if input is a valid snappy compressed Buffer, `false` otherwise.
+
+### stream
+
+For a streaming interface to snappy, please take a look at [snappy-stream](https://www.npmjs.org/package/snappy-stream)
 
 ## Benchmark
 
