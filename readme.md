@@ -18,7 +18,7 @@ npm install snappy
 ### Input
 
 ```javascript
-var snappy = require('./snappy')
+var snappy = require('snappy')
 
 snappy.compress('beep boop', function (err, compressed) {
   console.log('compressed is a Buffer', compressed)
