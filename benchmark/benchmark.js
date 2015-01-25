@@ -12,7 +12,7 @@ var util = require('util')
   , round = function (number) {
       return Math.round(number * 100) / 100
     }
-  , customGzip = function (callback) {
+  , customGzip = function (data, callback) {
       var buffers = []
         , size = 0
         , gzip = new zlib.Gzip({
@@ -23,16 +23,31 @@ var util = require('util')
       gzip.on('data', function (buffer) {
         buffers.push(buffer)
         size += buffer.length
-      })
-
-      gzip.on('end', function () {
+      }).on('end', function () {
         callback(null, Buffer.concat(buffers, size))
-        buffers.length = 0
       })
 
-      gzip.write(input)
-
+      gzip.write(data)
       gzip.end()
+    }
+  , customGunzip = function (data, callback) {
+
+      var buffers = []
+          , size = 0
+          , gunzip = new zlib.Gunzip({
+              level: zlib.Z_BEST_SPEED
+            , memLevel: zlib.Z_MAX_MEMLEVEL
+          })
+
+      gunzip.on('data', function (buffer) {
+        buffers.push(buffer)
+        size += buffer.length
+      }).on('end', function () {
+        callback(null, Buffer.concat(buffers, size))
+      })
+
+      gunzip.write(data)
+      gunzip.end()
     }
 
 console.log(chalk.underline(util.format('input size %s', bytes(input.length))))
@@ -95,10 +110,10 @@ require('run-series')([
   , function (done) {
       benchmark(
           'zlib.Gzip with custom options'
-        , customGzip
+        , customGzip.bind(zlib, input)
         , function (err, event) {
             console.log(chalk.magenta(event.target.toString()))
-            customGzip(function (err, compressed) {
+            customGzip(input, function (err, compressed) {
               var str = util.format(
                   'compressed size %s (%s%)'
                 , bytes(compressed.length)
@@ -141,8 +156,20 @@ require('run-series')([
           'zlib.inflate()'
           , zlib.inflate.bind(zlib, compressed)
           , function (err, event) {
-            console.log(chalk.white(event.target.toString()))
-            done()
+              console.log(chalk.white(event.target.toString()))
+              done()
+          }
+        )
+      })
+    }
+    , function (done) {
+      customGzip(input, function (err, compressed) {
+        benchmark(
+          'zlib.Gunzip with custom options'
+          , customGunzip.bind(zlib, compressed)
+          , function (err, event) {
+              console.log(chalk.magenta(event.target.toString()))
+              done()
           }
         )
       })
