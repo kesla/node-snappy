@@ -34,10 +34,7 @@ var util = require('util')
 
       var buffers = []
           , size = 0
-          , gunzip = new zlib.Gunzip({
-              level: zlib.Z_BEST_SPEED
-            , memLevel: zlib.Z_MAX_MEMLEVEL
-          })
+          , gunzip = new zlib.Gunzip()
 
       gunzip.on('data', function (buffer) {
         buffers.push(buffer)
@@ -52,10 +49,7 @@ var util = require('util')
   , customDeflate = function (data, callback) {
       var buffers = []
         , size = 0
-        , deflate = new zlib.Deflate({
-              level: zlib.Z_BEST_SPEED
-            , memLevel: zlib.Z_MAX_MEMLEVEL
-          })
+        , deflate = new zlib.Deflate()
 
       deflate.on('data', function (buffer) {
         buffers.push(buffer)
