@@ -12,7 +12,7 @@ var util = require('util')
   , round = function (number) {
       return Math.round(number * 100) / 100
     }
-  , customGzip = function (callback) {
+  , customGzip = function (data, callback) {
       var buffers = []
         , size = 0
         , gzip = new zlib.Gzip({
@@ -23,16 +23,62 @@ var util = require('util')
       gzip.on('data', function (buffer) {
         buffers.push(buffer)
         size += buffer.length
-      })
-
-      gzip.on('end', function () {
+      }).on('end', function () {
         callback(null, Buffer.concat(buffers, size))
-        buffers.length = 0
       })
 
-      gzip.write(input)
-
+      gzip.write(data)
       gzip.end()
+    }
+  , customGunzip = function (data, callback) {
+
+      var buffers = []
+          , size = 0
+          , gunzip = new zlib.Gunzip()
+
+      gunzip.on('data', function (buffer) {
+        buffers.push(buffer)
+        size += buffer.length
+      }).on('end', function () {
+        callback(null, Buffer.concat(buffers, size))
+      })
+
+      gunzip.write(data)
+      gunzip.end()
+    }
+  , customDeflate = function (data, callback) {
+      var buffers = []
+        , size = 0
+        , deflate = new zlib.Deflate()
+
+      deflate.on('data', function (buffer) {
+        buffers.push(buffer)
+        size += buffer.length
+      }).on('end', function () {
+        callback(null, Buffer.concat(buffers, size))
+      })
+
+      deflate.write(data)
+      deflate.end()
+    }
+  , customInflate = function (data, callback) {
+
+      var buffers = []
+          , size = 0
+          , inflate = new zlib.Inflate({
+              level: zlib.Z_BEST_SPEED
+            , memLevel: zlib.Z_MAX_MEMLEVEL
+          })
+
+      inflate.on('data', function (buffer) {
+        buffers.push(buffer)
+        size += buffer.length
+      }).on('end', function () {
+        callback(null, Buffer.concat(buffers, size))
+      })
+
+      inflate.write(data)
+      inflate.end()
     }
 
 console.log(chalk.underline(util.format('input size %s', bytes(input.length))))
@@ -74,19 +120,55 @@ require('run-series')([
           }
       )
     }
+    , function (done) {
+      benchmark(
+        'zlib.deflate()'
+        , zlib.deflate.bind(zlib, input)
+        , function (err, event) {
+          console.log(chalk.white(event.target.toString()))
+          zlib.deflate(input, function (err, compressed) {
+            var str = util.format(
+              'compressed size %s (%s%)'
+              , bytes(compressed.length)
+              , round(compressed.length / input.length * 100)
+            )
+            console.log(chalk.white(str))
+            done()
+          })
+        }
+      )
+    }
   , function (done) {
       benchmark(
           'zlib.Gzip with custom options'
-        , customGzip
+        , customGzip.bind(zlib, input)
         , function (err, event) {
             console.log(chalk.magenta(event.target.toString()))
-            customGzip(function (err, compressed) {
+            customGzip(input, function (err, compressed) {
               var str = util.format(
                   'compressed size %s (%s%)'
                 , bytes(compressed.length)
                 , round(compressed.length / input.length * 100)
               )
               console.log(chalk.magenta(str))
+              done()
+            })
+          }
+      )
+    }
+  , function (done) {
+      benchmark(
+          'zlib.Deflate with custom options'
+        , customDeflate.bind(zlib, input)
+        , function (err, event) {
+            console.log(chalk.green(event.target.toString()))
+            customDeflate(input, function (err, compressed) {
+              var str = util.format(
+                  'compressed size %s (%s%)'
+                , bytes(compressed.length)
+                , round(compressed.length / input.length * 100)
+              )
+              console.log(chalk.green(str))
               console.log()
               done()
             })
@@ -114,6 +196,42 @@ require('run-series')([
               console.log(chalk.yellow(event.target.toString()))
               done()
             }
+        )
+      })
+    }
+    , function (done) {
+      zlib.deflate(input, function (err, compressed) {
+        benchmark(
+          'zlib.inflate()'
+          , zlib.inflate.bind(zlib, compressed)
+          , function (err, event) {
+              console.log(chalk.white(event.target.toString()))
+              done()
+          }
+        )
+      })
+    }
+    , function (done) {
+      customGzip(input, function (err, compressed) {
+        benchmark(
+          'zlib.Gunzip with custom options'
+          , customGunzip.bind(zlib, compressed)
+          , function (err, event) {
+              console.log(chalk.magenta(event.target.toString()))
+              done()
+          }
+        )
+      })
+    }
+    , function (done) {
+      customDeflate(input, function (err, compressed) {
+        benchmark(
+          'zlib.Inflate with custom options'
+          , customInflate.bind(zlib, compressed)
+          , function (err, event) {
+              console.log(chalk.green(event.target.toString()))
+              done()
+          }
         )
       })
     }
