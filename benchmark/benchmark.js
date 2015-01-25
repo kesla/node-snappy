@@ -74,6 +74,24 @@ require('run-series')([
           }
       )
     }
+    , function (done) {
+      benchmark(
+        'zlib.deflate()'
+        , zlib.deflate.bind(zlib, input)
+        , function (err, event) {
+          console.log(chalk.white(event.target.toString()))
+          zlib.deflate(input, function (err, compressed) {
+            var str = util.format(
+              'compressed size %s (%s%)'
+              , bytes(compressed.length)
+              , round(compressed.length / input.length * 100)
+            )
+            console.log(chalk.white(str))
+            done()
+          })
+        }
+      )
+    }
   , function (done) {
       benchmark(
           'zlib.Gzip with custom options'
@@ -114,6 +132,18 @@ require('run-series')([
               console.log(chalk.yellow(event.target.toString()))
               done()
             }
+        )
+      })
+    }
+    , function (done) {
+      zlib.deflate(input, function (err, compressed) {
+        benchmark(
+          'zlib.inflate()'
+          , zlib.inflate.bind(zlib, compressed)
+          , function (err, event) {
+            console.log(chalk.white(event.target.toString()))
+            done()
+          }
         )
       })
     }
