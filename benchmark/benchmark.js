@@ -49,6 +49,43 @@ var util = require('util')
       gunzip.write(data)
       gunzip.end()
     }
+  , customDeflate = function (data, callback) {
+      var buffers = []
+        , size = 0
+        , deflate = new zlib.Deflate({
+              level: zlib.Z_BEST_SPEED
+            , memLevel: zlib.Z_MAX_MEMLEVEL
+          })
+
+      deflate.on('data', function (buffer) {
+        buffers.push(buffer)
+        size += buffer.length
+      }).on('end', function () {
+        callback(null, Buffer.concat(buffers, size))
+      })
+
+      deflate.write(data)
+      deflate.end()
+    }
+  , customInflate = function (data, callback) {
+
+      var buffers = []
+          , size = 0
+          , inflate = new zlib.Inflate({
+              level: zlib.Z_BEST_SPEED
+            , memLevel: zlib.Z_MAX_MEMLEVEL
+          })
+
+      inflate.on('data', function (buffer) {
+        buffers.push(buffer)
+        size += buffer.length
+      }).on('end', function () {
+        callback(null, Buffer.concat(buffers, size))
+      })
+
+      inflate.write(data)
+      inflate.end()
+    }
 
 console.log(chalk.underline(util.format('input size %s', bytes(input.length))))
 console.log()
@@ -120,6 +157,24 @@ require('run-series')([
                 , round(compressed.length / input.length * 100)
               )
               console.log(chalk.magenta(str))
+              done()
+            })
+          }
+      )
+    }
+  , function (done) {
+      benchmark(
+          'zlib.Deflate with custom options'
+        , customDeflate.bind(zlib, input)
+        , function (err, event) {
+            console.log(chalk.green(event.target.toString()))
+            customDeflate(input, function (err, compressed) {
+              var str = util.format(
+                  'compressed size %s (%s%)'
+                , bytes(compressed.length)
+                , round(compressed.length / input.length * 100)
+              )
+              console.log(chalk.green(str))
               console.log()
               done()
             })
@@ -169,6 +224,18 @@ require('run-series')([
           , customGunzip.bind(zlib, compressed)
           , function (err, event) {
               console.log(chalk.magenta(event.target.toString()))
+              done()
+          }
+        )
+      })
+    }
+    , function (done) {
+      customDeflate(input, function (err, compressed) {
+        benchmark(
+          'zlib.Inflate with custom options'
+          , customInflate.bind(zlib, compressed)
+          , function (err, event) {
+              console.log(chalk.green(event.target.toString()))
               done()
           }
         )
