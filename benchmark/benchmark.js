@@ -49,7 +49,10 @@ var util = require('util')
   , customDeflate = function (data, callback) {
       var buffers = []
         , size = 0
-        , deflate = new zlib.Deflate()
+        , deflate = new zlib.Deflate({
+              level: zlib.Z_BEST_SPEED
+            , memLevel: zlib.Z_MAX_MEMLEVEL
+          })
 
       deflate.on('data', function (buffer) {
         buffers.push(buffer)
@@ -65,10 +68,7 @@ var util = require('util')
 
       var buffers = []
           , size = 0
-          , inflate = new zlib.Inflate({
-              level: zlib.Z_BEST_SPEED
-            , memLevel: zlib.Z_MAX_MEMLEVEL
-          })
+          , inflate = new zlib.Inflate()
 
       inflate.on('data', function (buffer) {
         buffers.push(buffer)
