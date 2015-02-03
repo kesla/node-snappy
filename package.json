@@ -10,7 +10,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "test": "tap test.js",
+    "test": "mocha --check-leaks --reporter spec --bail",
     "install": "node-gyp rebuild"
   },
   "dependencies": {
@@ -18,7 +18,7 @@
     "nan": "1.5.3"
   },
   "devDependencies": {
-    "tap": "~0.4.11"
+    "mocha": "~2.1"
   },
   "gypfile": true,
   "bugs": {
