@@ -39,7 +39,14 @@ exports.compress = function(input, callback) {
 /**
  * Asyncronous decide if a buffer is compressed in a correct way.
  */
-exports.isValidCompressed = binding.isValidCompressed;
+exports.isValidCompressed = function(compressed, callback) {
+  
+  if (Buffer.isBuffer(compressed) === false) {
+    return callback(new Error('Input must be a Buffer'))
+  }
+
+  return binding.isValidCompressed(compressed, callback)
+}
 
 /**
  * Asyncronous uncompress previously compressed data.
