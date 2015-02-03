@@ -21,39 +21,52 @@
  * THE SOFTWARE.
 */
 
-var binding = require('bindings')('binding');
+var binding = require('bindings')('binding')
 
 /**
  * Compress asyncronous.
- * If input isn't a string or buffer, automatically convert to buffer by using
- * JSON.stringify.
+ * If input isn't a string or buffer, automatically convert to buffer by using JSON.stringify.
+ * 
+ * @param {String|Buffer} input - data input
+ * @param {Function} callback - callback
  */
-exports.compress = function(input, callback) {
+function compress(input, callback) {
 
   if (typeof (input) !== 'string' && Buffer.isBuffer(input) === false) {
     return callback(new Error('Input must be a String or a Buffer'))
   }
 
   return binding.compress(input, callback)
-};
+}
+module.exports.compress = compress
+module.exports.pureCompress = binding.compress // avoid data check
 
 /**
  * Asyncronous decide if a buffer is compressed in a correct way.
+ * 
+ * @param {Buffer} compressed - compressed data
+ * @param {Function} callback - callback
  */
-exports.isValidCompressed = function(compressed, callback) {
-  
+function isValidCompressed(compressed, callback) {
+
   if (Buffer.isBuffer(compressed) === false) {
     return callback(new Error('Input must be a Buffer'))
   }
 
   return binding.isValidCompressed(compressed, callback)
 }
+module.exports.isValidCompressed = isValidCompressed
+module.exports.pureIsValidCompressed = binding.isValidCompressed // avoid data check
 
 /**
  * Asyncronous uncompress previously compressed data.
  * A parser can be attached. If no parser is attached, return buffer.
+ * 
+ * @param {Buffer} compressed - compressed data
+ * @param {Object} [opts] - output options
+ * @param {Function} callback - callback
  */
-exports.uncompress = function(compressed, opts, callback) {
+function uncompress(compressed, opts, callback) {
 
   if (callback === undefined) {
     callback = opts
@@ -69,6 +82,6 @@ exports.uncompress = function(compressed, opts, callback) {
   }
 
   return binding.uncompress(compressed, opts, callback)
-
-  binding.uncompress(compressed, opts, callback)
 }
+module.exports.uncompress = uncompress
+module.exports.pureUncompress = binding.uncompress // avoid data check
