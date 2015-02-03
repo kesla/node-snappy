@@ -1,0 +1,11 @@
+.git*
+.npmignore
+.travis.yml
+
+*.log
+
+benchmark/
+build/
+examples/
+node_modules/
+test/
