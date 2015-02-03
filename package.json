@@ -8,7 +8,7 @@
     "type": "git",
     "url": "git://github.com/kesla/node-snappy.git"
   },
-  "main": "snappy.js",
+  "main": "index.js",
   "scripts": {
     "test": "tap test.js",
     "install": "node-gyp rebuild"
