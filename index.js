@@ -28,10 +28,12 @@ var binding = require('bindings')('binding');
  * JSON.stringify.
  */
 exports.compress = function(input, callback) {
-  if (!(typeof (input) === 'string' || Buffer.isBuffer(input)))
-    return callback(new Error('input must be a String or a Buffer'))
 
-  binding.compress(input, callback);
+  if (typeof (input) !== 'string' && Buffer.isBuffer(input) === false) {
+    return callback(new Error('Input must be a String or a Buffer'))
+  }
+
+  return binding.compress(input, callback)
 };
 
 /**
@@ -45,16 +47,20 @@ exports.isValidCompressed = binding.isValidCompressed;
  */
 exports.uncompress = function(compressed, opts, callback) {
 
-  if (!callback) {
+  if (callback === undefined) {
     callback = opts
-    opts = {}
+    opts = {
+      asBuffer: true
+    }
+  } else if (typeof (opts.asBuffer) !== 'boolean') {
+    opts.asBuffer = true
   }
 
-  if (!Buffer.isBuffer(compressed))
-    return callback(new Error('input must be a Buffer'))
+  if (Buffer.isBuffer(compressed) === false) {
+    return callback(new Error('Input must be a Buffer'))
+  }
 
-  if (typeof(opts.asBuffer) !== 'boolean')
-    opts.asBuffer = true
+  return binding.uncompress(compressed, opts, callback)
 
   binding.uncompress(compressed, opts, callback)
 }
