@@ -10,7 +10,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "test": "mocha --check-leaks --reporter spec --bail",
+    "test": "mocha --bail --check-leaks",
     "install": "node-gyp rebuild"
   },
   "dependencies": {
@@ -24,5 +24,8 @@
   "bugs": {
     "url": "https://github.com/kesla/node-snappy/issues"
   },
+  "engines": {
+    "node": ">=0.10"
+   },
   "license": "MIT"
 }
