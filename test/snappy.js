@@ -46,11 +46,11 @@ describe('snappy', function() {
       })
     })
 
-    describe('pure', function() {
+    describe('binding', function() {
 
       it('should return compressed Buffer', function(done) {
 
-        snappy.pureCompress(inputBuffer, function(err, buffer) {
+        snappy.binding.compress(inputBuffer, function(err, buffer) {
 
           assert.equal(err, null)
           assert.deepEqual(buffer, compressed)
@@ -59,7 +59,7 @@ describe('snappy', function() {
       })
       it('should return compressed Buffer', function(done) {
 
-        snappy.pureCompress(inputString, function(err, buffer) {
+        snappy.binding.compress(inputString, function(err, buffer) {
 
           assert.equal(err, null)
           assert.deepEqual(buffer, compressed)
@@ -110,11 +110,11 @@ describe('snappy', function() {
       })
     })
 
-    describe('pure', function() {
+    describe('binding', function() {
 
       it('should return true', function(done) {
 
-        snappy.pureIsValidCompressed(compressed, function(err,
+        snappy.binding.isValidCompressed(compressed, function(err,
                                                           isValidCompressed) {
 
           assert.equal(err, null)
@@ -189,11 +189,11 @@ describe('snappy', function() {
       })
     })
 
-    describe('pure', function() {
+    describe('binding', function() {
 
       it('should return Buffer', function(done) {
 
-        snappy.pureUncompress(compressed, {
+        snappy.binding.uncompress(compressed, {
           asBuffer: true
         }, function(err, buffer) {
 
@@ -204,7 +204,7 @@ describe('snappy', function() {
       })
       it('should return String', function(done) {
 
-        snappy.pureUncompress(compressed, {
+        snappy.binding.uncompress(compressed, {
           asBuffer: false
         }, function(err, buffer) {
 

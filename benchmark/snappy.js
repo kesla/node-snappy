@@ -36,11 +36,11 @@ require('run-series')([
     }
   , function (done) {
       benchmark(
-          'snappy.pureCompress()'
+          'snappy.binding.compress()'
         , snappy.compress.bind(snappy, input)
         , function (err, event) {
             console.log(chalk.blue(event.target.toString()))
-            snappy.pureCompress(input, function (err, compressed) {
+            snappy.binding.compress(input, function (err, compressed) {
               var str = util.format(
                   'compressed size %s (%s%)'
                 , bytes(compressed.length)
@@ -66,10 +66,10 @@ require('run-series')([
       })
     }
   , function (done) {
-      snappy.pureCompress(input, function (err, compressed) {
+      snappy.binding.compress(input, function (err, compressed) {
         benchmark(
-            'snappy.pureUncompress() asBuffer'
-          , snappy.pureUncompress.bind(snappy, compressed, {asBuffer: true})
+            'snappy.binding.uncompress() asBuffer'
+          , snappy.binding.uncompress.bind(snappy, compressed, {asBuffer: true})
           , function (err, event) {
               console.log(chalk.blue(event.target.toString()))
               console.log()
@@ -91,10 +91,10 @@ require('run-series')([
       })
     }
   , function (done) {
-      snappy.pureCompress(input, function (err, compressed) {
+      snappy.binding.compress(input, function (err, compressed) {
         benchmark(
-            'snappy.pureUncompress() asString'
-          , snappy.pureUncompress.bind(snappy, compressed, {asBuffer: false})
+            'snappy.binding.uncompress() asString'
+          , snappy.binding.uncompress.bind(snappy, compressed, {asBuffer: false})
           , function (err, event) {
               console.log(chalk.bgBlue(event.target.toString()))
               done()

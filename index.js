@@ -22,6 +22,7 @@
 */
 
 var binding = require('bindings')('binding')
+module.exports.binding = binding
 
 /**
  * Compress asyncronous.
@@ -39,7 +40,6 @@ function compress(input, callback) {
   return binding.compress(input, callback)
 }
 module.exports.compress = compress
-module.exports.pureCompress = binding.compress // avoid data check
 
 /**
  * Asyncronous decide if a buffer is compressed in a correct way.
@@ -56,7 +56,6 @@ function isValidCompressed(compressed, callback) {
   return binding.isValidCompressed(compressed, callback)
 }
 module.exports.isValidCompressed = isValidCompressed
-module.exports.pureIsValidCompressed = binding.isValidCompressed // avoid data check
 
 /**
  * Asyncronous uncompress previously compressed data.
@@ -84,4 +83,3 @@ function uncompress(compressed, opts, callback) {
   return binding.uncompress(compressed, opts, callback)
 }
 module.exports.uncompress = uncompress
-module.exports.pureUncompress = binding.uncompress // avoid data check
