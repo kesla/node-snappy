@@ -110,7 +110,7 @@ class UncompressWorker : public NanAsyncWorker {
       v8::Local<v8::Value> res;
       if (asBuffer) {
         res = NanNewBufferHandle(dst.length());
-        memcpy(node::Buffer::Data(res), dst.c_str(), dst.length());
+        memcpy(node::Buffer::Data(res.As<v8::Object>()), dst.c_str(), dst.length());
       } else {
         res = NanNew<v8::String>(dst.c_str(), dst.length());
       }
