@@ -8,21 +8,24 @@
     "type": "git",
     "url": "git://github.com/kesla/node-snappy.git"
   },
-  "main": "snappy.js",
+  "main": "index.js",
   "scripts": {
-    "test": "tap test.js",
+    "test": "mocha --bail --check-leaks",
     "install": "node-gyp rebuild"
   },
   "dependencies": {
-    "bindings": "~1.1.1",
-    "nan": "1.5.3"
+    "bindings": "1.2.1",
+    "nan": "1.6.2"
   },
   "devDependencies": {
-    "tap": "~0.4.11"
+    "mocha": "~2.1"
   },
   "gypfile": true,
   "bugs": {
     "url": "https://github.com/kesla/node-snappy/issues"
   },
+  "engines": {
+    "node": ">=0.10"
+   },
   "license": "MIT"
 }

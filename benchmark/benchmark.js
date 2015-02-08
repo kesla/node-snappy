@@ -5,7 +5,7 @@ var util = require('util')
   , bytes = require('bytes')
   , chalk = require('chalk')
 
-  , snappy = require('../snappy')
+  , snappy = require('..')
   , input = require('fs').readFileSync(
       require('path').join(__dirname, '../deps/snappy/snappy-1.1.2/snappy.cc')
     )
@@ -120,7 +120,7 @@ require('run-series')([
           }
       )
     }
-    , function (done) {
+  , function (done) {
       benchmark(
         'zlib.deflate()'
         , zlib.deflate.bind(zlib, input)
@@ -179,7 +179,7 @@ require('run-series')([
       snappy.compress(input, function (err, compressed) {
         benchmark(
             'snappy.uncompress()'
-          , snappy.uncompress.bind(snappy, compressed)
+          , snappy.uncompress.bind(snappy, compressed, {asBuffer: true})
           , function (err, event) {
               console.log(chalk.blue(event.target.toString()))
               done()
@@ -199,7 +199,7 @@ require('run-series')([
         )
       })
     }
-    , function (done) {
+  , function (done) {
       zlib.deflate(input, function (err, compressed) {
         benchmark(
           'zlib.inflate()'
@@ -211,7 +211,7 @@ require('run-series')([
         )
       })
     }
-    , function (done) {
+  , function (done) {
       customGzip(input, function (err, compressed) {
         benchmark(
           'zlib.Gunzip with custom options'
@@ -223,7 +223,7 @@ require('run-series')([
         )
       })
     }
-    , function (done) {
+  , function (done) {
       customDeflate(input, function (err, compressed) {
         benchmark(
           'zlib.Inflate with custom options'
