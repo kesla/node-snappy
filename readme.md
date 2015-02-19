@@ -1,4 +1,4 @@
-# snappy-stream[![build status](https://secure.travis-ci.org/kesla/node-snappy-stream.png)](http://travis-ci.org/kesla/node-snappy-stream)
+# snappy-stream[![build status](https://secure.travis-ci.org/kesla/node-snappy-stream.svg)](http://travis-ci.org/kesla/node-snappy-stream)
 
 Compress data over a Stream using the snappy framing format
 
@@ -31,7 +31,7 @@ This is the result I'm seeing on my laptop (Macbook Air from 2012) running `node
 ### Input
 
 ```javascript
-var snappyStream = require('./stream')
+var snappyStream = require('snappy-stream')
   , compressStream = snappyStream.createCompressStream()
   , uncompressStream = snappyStream.createUncompressStream({
       asBuffer: false // optional option, asBuffer = false means that the stream emits strings, default: true
