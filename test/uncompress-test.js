@@ -1,6 +1,6 @@
 var spawn = require('child_process').spawn
 
-  , createUncompressStream = require('../stream').createUncompressStream
+  , createUncompressStream = require('../').createUncompressStream
   , test = require('tap').test
   , largerInput = require('fs').readFileSync(__filename)
   , largerInputString = largerInput.toString()

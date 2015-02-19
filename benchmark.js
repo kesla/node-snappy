@@ -1,10 +1,10 @@
 var benchmark = require('async-benchmark')
   , input = Buffer.concat([
-          require('fs').readFileSync(__dirname + '/compress-stream.js')
-        , require('fs').readFileSync(__dirname + '/uncompress-stream.js')
-        , require('fs').readFileSync(__dirname + '/stream.js')
+          require('fs').readFileSync(__dirname + '/lib/compress-stream.js')
+        , require('fs').readFileSync(__dirname + '/lib/uncompress-stream.js')
+        , require('fs').readFileSync(__dirname + '/index.js')
       ])
-  , snappy = require('./stream')
+  , snappy = require('./')
   , zlib = require('zlib')
   , exec = require('child_process').exec
 

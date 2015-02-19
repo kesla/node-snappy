@@ -1,4 +1,4 @@
-var snappyStream = require('./stream')
+var snappyStream = require('./')
   , compressStream = snappyStream.createCompressStream()
   , uncompressStream = snappyStream.createUncompressStream({
       asBuffer: false // optional option, asBuffer = false means that the stream emits strings, default: true

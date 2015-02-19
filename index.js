@@ -1,5 +1,5 @@
-var CompressStream = require('./compress-stream')
-  , UncompressStream = require('./uncompress-stream')
+var CompressStream = require('./lib/compress-stream')
+  , UncompressStream = require('./lib/uncompress-stream')
 
 module.exports = {
     createUncompressStream: function (opts) {
