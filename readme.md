@@ -77,7 +77,7 @@ This is the result I'm seeing on my laptop (Macbook Air from 2012) running `node
 
 ## License
 
-Copyright (c) 2011 - 2014 David Björklund & contributors
+Copyright (c) 2011 - 2015 David Björklund & contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
