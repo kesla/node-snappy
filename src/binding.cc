@@ -182,6 +182,19 @@ NAN_METHOD(IsValidCompressed) {
   NanReturnUndefined();
 }
 
+NAN_METHOD(IsValidCompressedSync) {
+  NanScope();
+
+  v8::Handle<v8::Object> object = args[0]->ToObject();
+  size_t length = node::Buffer::Length(object);
+  const char *data = node::Buffer::Data(object);
+
+  bool res = snappy::IsValidCompressedBuffer(data, length);
+
+
+  NanReturnValue((res ? NanTrue() : NanFalse()));
+}
+
 NAN_METHOD(Uncompress) {
   NanScope();
 
@@ -210,6 +223,7 @@ init(v8::Handle<v8::Object> exports) {
   NODE_SET_METHOD(exports, "compress", Compress);
   NODE_SET_METHOD(exports, "compressSync", CompressSync);
   NODE_SET_METHOD(exports, "isValidCompressed", IsValidCompressed);
+  NODE_SET_METHOD(exports, "isValidCompressedSync", IsValidCompressedSync);
   NODE_SET_METHOD(exports, "uncompress", Uncompress);
 }
 

@@ -37,19 +37,31 @@ test('compressSync() buffer', function (t) {
 })
 
 test('isValidCompressed() on valid data', function (t) {
-  snappy.isValidCompressed(compressed, function (err, isValidCompressed) {
+  snappy.isValidCompressed(compressed, function (err, results) {
     t.error(err)
-    t.equal(isValidCompressed, true)
+    t.equal(results, true)
     t.end()
   })
 })
 
 test('isValidCompressed() on invalid data', function (t) {
-  snappy.isValidCompressed(new Buffer('beep boop'), function (err, isValidCompressed) {
+  snappy.isValidCompressed(new Buffer('beep boop'), function (err, results) {
     t.error(err)
-    t.equal(isValidCompressed, false)
+    t.equal(results, false)
     t.end()
   })
+})
+
+test('isValidCompressedSync() on valid data', function (t) {
+  var results = snappy.isValidCompressedSync(compressed)
+  t.equal(results, true)
+  t.end()
+})
+
+test('isValidCompressedSync() on invalid data', function (t) {
+  var results = snappy.isValidCompressedSync(new Buffer('beep boop'))
+  t.equal(results, false)
+  t.end()
 })
 
 test('uncompress() defaults to Buffer', function (t) {

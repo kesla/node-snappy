@@ -25,6 +25,8 @@ exports.compressSync = function (input) {
  */
 exports.isValidCompressed = binding.isValidCompressed
 
+exports.isValidCompressedSync = binding.isValidCompressedSync;
+
 /**
  * Asyncronous uncompress previously compressed data.
  * A parser can be attached. If no parser is attached, return buffer.
