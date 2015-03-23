@@ -15,6 +15,12 @@ test('compress() string', function (t) {
   })
 })
 
+test('compressSync() string', function (t) {
+  var buffer = snappy.compressSync(inputString)
+  t.ok(Buffer.isBuffer(buffer), 'should return a Buffer')
+  t.end()
+})
+
 test('compress() buffer', function (t) {
   snappy.compress(inputBuffer, function (err, buffer) {
     t.error(err)
@@ -22,6 +28,12 @@ test('compress() buffer', function (t) {
     t.deepEqual(buffer, compressed, 'should compress to same as string')
     t.end()
   })
+})
+
+test('compressSync() buffer', function (t) {
+  var buffer = snappy.compressSync(inputBuffer)
+  t.ok(Buffer.isBuffer(buffer), 'should return a Buffer')
+  t.end()
 })
 
 test('isValidCompressed() on valid data', function (t) {

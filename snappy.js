@@ -1,5 +1,6 @@
 
-var binding = require('bindings')('binding');
+var binding = require('bindings')('binding')
+var assert = require('assert')
 
 /**
  * Compress asyncronous.
@@ -10,15 +11,19 @@ exports.compress = function(input, callback) {
   if (!(typeof (input) === 'string' || Buffer.isBuffer(input)))
     return callback(new Error('input must be a String or a Buffer'))
 
-  binding.compress(input, callback);
-};
+  binding.compress(input, callback)
+}
 
+exports.compressSync = function (input) {
+  assert(typeof(input) === 'string' || Buffer.isBuffer(input), 'input must be a String or a Buffer')
 
+  return binding.compressSync(input)
+}
 
 /**
  * Asyncronous decide if a buffer is compressed in a correct way.
  */
-exports.isValidCompressed = binding.isValidCompressed;
+exports.isValidCompressed = binding.isValidCompressed
 
 /**
  * Asyncronous uncompress previously compressed data.
