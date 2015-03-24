@@ -219,6 +219,8 @@ NAN_METHOD(Uncompress) {
 }
 
 NAN_METHOD(UncompressSync) {
+  NanScope();
+
   std::string dst;
 
   v8::Handle<v8::Object> object = args[0]->ToObject();
