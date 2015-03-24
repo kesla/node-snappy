@@ -45,3 +45,13 @@ exports.uncompress = function(compressed, opts, callback) {
 
   binding.uncompress(compressed, opts, callback)
 }
+
+exports.uncompressSync = function (compressed, opts) {
+  assert(Buffer.isBuffer(compressed), 'input must be a Buffer');
+
+  opts = opts || {};
+  if (typeof(opts.asBuffer) !== 'boolean')
+    opts.asBuffer = true
+
+  return binding.uncompressSync(compressed, opts)
+}

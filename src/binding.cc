@@ -218,6 +218,29 @@ NAN_METHOD(Uncompress) {
   NanReturnUndefined();
 }
 
+NAN_METHOD(UncompressSync) {
+  std::string dst;
+
+  v8::Handle<v8::Object> object = args[0]->ToObject();
+  size_t length = node::Buffer::Length(object);
+  const char *data = node::Buffer::Data(object);
+
+  v8::Local<v8::Object> optionsObj = args[1].As<v8::Object>();
+  bool asBuffer = NanBooleanOptionValue(optionsObj, NanNew("asBuffer"));
+
+  snappy::Compress(data, length, &dst);
+
+  v8::Local<v8::Value> res;
+  if (asBuffer) {
+    res = NanNewBufferHandle(dst.length());
+    memcpy(node::Buffer::Data(res.As<v8::Object>()), dst.c_str(), dst.length());
+  } else {
+    res = NanNew<v8::String>(dst.c_str(), dst.length());
+  }
+
+  NanReturnValue(res);
+}
+
 extern "C" void
 init(v8::Handle<v8::Object> exports) {
   NODE_SET_METHOD(exports, "compress", Compress);
@@ -225,6 +248,7 @@ init(v8::Handle<v8::Object> exports) {
   NODE_SET_METHOD(exports, "isValidCompressed", IsValidCompressed);
   NODE_SET_METHOD(exports, "isValidCompressedSync", IsValidCompressedSync);
   NODE_SET_METHOD(exports, "uncompress", Uncompress);
+  NODE_SET_METHOD(exports, "uncompressSync", UncompressSync);
 }
 
 NODE_MODULE(binding, init)

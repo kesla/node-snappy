@@ -94,3 +94,28 @@ test('uncompress() on bad input', function (t) {
     t.end()
   })
 })
+
+test('uncompressSync() defaults to Buffer', function (t) {
+  var results = snappy.uncompressSync(compressed)
+  t.deepEqual(results, inputBuffer)
+  t.end()
+})
+
+test('uncompressSync() returning a Buffer', function (t) {
+  var results = snappy.uncompressSync(compressed, { asBuffer: true })
+  t.deepEqual(results, inputBuffer)
+  t.end()
+})
+
+test('uncompressSync() returning a String', function (t) {
+  var results = snappy.uncompressSync(compressed, { asBuffer: false })
+  t.deepEqual(results, inputString)
+  t.end()
+})
+
+test('uncompressSync() on bad input', function (t) {
+  t.throws(function () {
+    snappy.uncompressSync(new Buffer('beep boop OMG OMG OMG'))
+  }, 'Invalid input')
+  t.end()
+})
