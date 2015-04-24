@@ -230,7 +230,9 @@ NAN_METHOD(UncompressSync) {
   v8::Local<v8::Object> optionsObj = args[1].As<v8::Object>();
   bool asBuffer = NanBooleanOptionValue(optionsObj, NanNew("asBuffer"));
 
-  snappy::Compress(data, length, &dst);
+  if (!snappy::Uncompress(data, length, &dst)) {
+    return NanThrowError("Invalid input");
+  }
 
   v8::Local<v8::Value> res;
   if (asBuffer) {
