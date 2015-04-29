@@ -44,6 +44,10 @@ Compress `input`, which can be a `Buffer` or a `String`.
 
 The `callback` function will be called with a single `error` if the operation failed for any reason. If successful the first argument will be `null` and the second argument will be the `value` as a ``Buffer`.
 
+### snappy.compressSync(input)
+
+The synchronous version of `snappy.compress`, returns the compressed value.
+
 ### snappy.uncompress(compressed, [options,] callback)
 
 Uncompress `compressed` and call `callback` with `err` and `decompressed`.
@@ -54,11 +58,19 @@ Uncompress `compressed` and call `callback` with `err` and `decompressed`.
 
 The `callback` function will be called with a single `error` if the operation failed for any reason. If successful the first argument will be `null` and the second argument will be the `value` as a `String` or `Buffer` depending on the `asBuffer` option.
 
+### snappy.uncompressSync(compressed, [options])
+
+The synchronous version of `snappy.uncompress`, returns the uncompressed value.
+
 ### snappy.isValidCompressed(input, callback)
 
 Check is input is a valid compressed `Buffer`.
 
 The `callback` function will be called with a single `error` if the operation failed for any reason and the second argument will be `true` if input is a valid snappy compressed Buffer, `false` otherwise.
+
+### snappy.isValidCompressedSync(input)
+
+The synchronous version of `snappy.isValidCompressed`, returns a boolean indicating if inpus was correctly compressed or not.
 
 ### stream
 
