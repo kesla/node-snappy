@@ -18,6 +18,7 @@ test('compress() string', function (t) {
 test('compressSync() string', function (t) {
   var buffer = snappy.compressSync(inputString)
   t.ok(Buffer.isBuffer(buffer), 'should return a Buffer')
+  t.deepEqual(buffer, compressed, 'should compress to same as async version')
   t.end()
 })
 
@@ -33,6 +34,7 @@ test('compress() buffer', function (t) {
 test('compressSync() buffer', function (t) {
   var buffer = snappy.compressSync(inputBuffer)
   t.ok(Buffer.isBuffer(buffer), 'should return a Buffer')
+  t.deepEqual(buffer, compressed, 'should compress to same as async version')
   t.end()
 })
 
