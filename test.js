@@ -15,6 +15,13 @@ test('compress() string', function (t) {
   })
 })
 
+test('compressSync() string', function (t) {
+  var buffer = snappy.compressSync(inputString)
+  t.ok(Buffer.isBuffer(buffer), 'should return a Buffer')
+  t.deepEqual(buffer, compressed, 'should compress to same as async version')
+  t.end()
+})
+
 test('compress() buffer', function (t) {
   snappy.compress(inputBuffer, function (err, buffer) {
     t.error(err)
@@ -24,20 +31,39 @@ test('compress() buffer', function (t) {
   })
 })
 
+test('compressSync() buffer', function (t) {
+  var buffer = snappy.compressSync(inputBuffer)
+  t.ok(Buffer.isBuffer(buffer), 'should return a Buffer')
+  t.deepEqual(buffer, compressed, 'should compress to same as async version')
+  t.end()
+})
+
 test('isValidCompressed() on valid data', function (t) {
-  snappy.isValidCompressed(compressed, function (err, isValidCompressed) {
+  snappy.isValidCompressed(compressed, function (err, results) {
     t.error(err)
-    t.equal(isValidCompressed, true)
+    t.equal(results, true)
     t.end()
   })
 })
 
 test('isValidCompressed() on invalid data', function (t) {
-  snappy.isValidCompressed(new Buffer('beep boop'), function (err, isValidCompressed) {
+  snappy.isValidCompressed(new Buffer('beep boop'), function (err, results) {
     t.error(err)
-    t.equal(isValidCompressed, false)
+    t.equal(results, false)
     t.end()
   })
+})
+
+test('isValidCompressedSync() on valid data', function (t) {
+  var results = snappy.isValidCompressedSync(compressed)
+  t.equal(results, true)
+  t.end()
+})
+
+test('isValidCompressedSync() on invalid data', function (t) {
+  var results = snappy.isValidCompressedSync(new Buffer('beep boop'))
+  t.equal(results, false)
+  t.end()
 })
 
 test('uncompress() defaults to Buffer', function (t) {
@@ -69,4 +95,29 @@ test('uncompress() on bad input', function (t) {
     t.equal(err.message, 'Invalid input')
     t.end()
   })
+})
+
+test('uncompressSync() defaults to Buffer', function (t) {
+  var results = snappy.uncompressSync(compressed)
+  t.deepEqual(results, inputBuffer)
+  t.end()
+})
+
+test('uncompressSync() returning a Buffer', function (t) {
+  var results = snappy.uncompressSync(compressed, { asBuffer: true })
+  t.deepEqual(results, inputBuffer)
+  t.end()
+})
+
+test('uncompressSync() returning a String', function (t) {
+  var results = snappy.uncompressSync(compressed, { asBuffer: false })
+  t.deepEqual(results, inputString)
+  t.end()
+})
+
+test('uncompressSync() on bad input', function (t) {
+  t.throws(function () {
+    snappy.uncompressSync(new Buffer('beep boop OMG OMG OMG'))
+  }, 'Invalid input')
+  t.end()
 })
