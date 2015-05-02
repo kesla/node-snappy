@@ -1,4 +1,4 @@
-# snappy[![build status](https://secure.travis-ci.org/kesla/node-snappy.svg)](http://travis-ci.org/kesla/node-snappy)
+# snappy [![Linux Status](https://img.shields.io/travis/kesla/node-snappy.svg?label=linux)](https://travis-ci.org/kesla/node-snappy) [![Windows Status](https://img.shields.io/appveyor/ci/kesla/node-snappy.svg?label=windows)](https://ci.appveyor.com/project/kesla/node-snappy)
 
 Nodejs bindings to the [snappy](github.com/google/snappy) compression library
 
@@ -9,7 +9,7 @@ Nodejs bindings to the [snappy](github.com/google/snappy) compression library
 
 ## Installation
 
-```
+```bash
 npm install snappy
 ```
 
@@ -31,7 +31,7 @@ snappy.compress('beep boop', function (err, compressed) {
 
 ### Output
 
-```
+```bash
 compressed is a Buffer <SlowBuffer 09 20 62 65 65 70 20 62 6f 6f 70>
 the original String beep boop
 ```
@@ -44,7 +44,7 @@ Compress `input`, which can be a `Buffer` or a `String`.
 
 The `callback` function will be called with a single `error` if the operation failed for any reason. If successful the first argument will be `null` and the second argument will be the `value` as a ``Buffer`.
 
-### snappy.uncompress(compressed[, options] callback)
+### snappy.uncompress(compressed, [options,] callback)
 
 Uncompress `compressed` and call `callback` with `err` and `decompressed`.
 
@@ -64,11 +64,11 @@ The `callback` function will be called with a single `error` if the operation fa
 
 For a streaming interface to snappy, please take a look at [snappy-stream](https://www.npmjs.org/package/snappy-stream)
 
-## Benchmark
+## [Benchmark](benchmark)
 
 This is the result I'm seeing on my laptop (Macbook Air from 2012) running `node benchmark`
 
-```
+```bash
   snappy.compress() x 479 ops/sec ±0.99% (80 runs sampled)
   zlib.gzip() x 289 ops/sec ±1.66% (86 runs sampled)
   snappy.uncompress() x 652 ops/sec ±0.86% (43 runs sampled)
