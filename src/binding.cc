@@ -12,15 +12,13 @@ namespace nodesnappy {
 
 class CompressWorker : public NanAsyncWorker {
   public:
-    CompressWorker(std::string* input, NanCallback *callback)
-      : NanAsyncWorker(callback), input(input) {}
+    CompressWorker(const char *input, int length, NanCallback *callback)
+      : NanAsyncWorker(callback), input(input, length) {}
 
-    ~CompressWorker() {
-      delete input;
-    }
+    ~CompressWorker() {}
 
     void Execute() {
-      snappy::Compress(input->data(), input->length(), &dst);
+      snappy::Compress(input.data(), input.length(), &dst);
     }
 
     void HandleOKCallback() {
@@ -38,7 +36,7 @@ class CompressWorker : public NanAsyncWorker {
     }
 
   private:
-    std::string* input;
+    std::string input;
     std::string dst;
 };
 
@@ -112,25 +110,20 @@ class UncompressWorker : public NanAsyncWorker {
 NAN_METHOD(Compress) {
   NanScope();
 
-  std::string *input;
-
-  if (node::Buffer::HasInstance(args[0]->ToObject())) {
-    v8::Handle<v8::Object> object = args[0]->ToObject();
-    size_t length = node::Buffer::Length(object);
-    const char *data = node::Buffer::Data(object);
-    input = new std::string(data, length);
-  } else {
-    v8::String::Utf8Value param1(args[0]->ToString());
-    input = new std::string(*param1);
-  }
+  CompressWorker* worker;
 
   NanCallback* callback = new NanCallback(
     v8::Local<v8::Function>::Cast(args[1])
   );
 
-  CompressWorker* worker = new CompressWorker(
-      input, callback
-  );
+  if (node::Buffer::HasInstance(args[0]->ToObject())) {
+    v8::Handle<v8::Object> object = args[0]->ToObject();
+    int length = node::Buffer::Length(object);
+    worker = new CompressWorker(node::Buffer::Data(object), length, callback);
+  } else {
+    v8::String::Utf8Value param1(args[0]->ToString());
+    worker = new CompressWorker(*param1, param1.length(), callback);
+  }
 
   NanAsyncQueueWorker(worker);
 
