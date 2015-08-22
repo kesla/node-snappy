@@ -70,7 +70,7 @@ The `callback` function will be called with a single `error` if the operation fa
 
 ### snappy.isValidCompressedSync(input)
 
-The synchronous version of `snappy.isValidCompressed`, returns a boolean indicating if inpus was correctly compressed or not.
+The synchronous version of `snappy.isValidCompressed`, returns a boolean indicating if input was correctly compressed or not.
 
 ### stream
 
