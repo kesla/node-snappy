@@ -11,12 +11,12 @@
   "main": "snappy.js",
   "scripts": {
     "test": "tap test.js",
-    "install": "pangyp rebuild"
+    "install": "node-gyp rebuild"
   },
   "dependencies": {
     "bindings": "^1.2.0",
     "nan": "^2.0.0",
-    "pangyp": "^2.1.0"
+    "node-gyp": "^3.0.1"
   },
   "devDependencies": {
     "tap": "^0.4.11"
