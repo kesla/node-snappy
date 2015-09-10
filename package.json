@@ -10,8 +10,7 @@
   },
   "main": "snappy.js",
   "scripts": {
-    "test": "tap test.js",
-    "install": "node-gyp rebuild"
+    "test": "tap test.js"
   },
   "dependencies": {
     "bindings": "^1.2.0",
