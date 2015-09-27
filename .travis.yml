@@ -9,4 +9,4 @@ node_js:
   - "iojs"
   - "4.0"
 before_install:
-  - if [ "$(npm -v | cut -c1)" == '1' ]; then npm -g i npm; fi
+  - if [ "$(npm -v | cut -c1)" == '1' ]; then npm -g i npm@2; fi
