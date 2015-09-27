@@ -14,12 +14,12 @@
     "install": "./node_modules/.bin/node-gyp rebuild"
   },
   "dependencies": {
-    "bindings": "^1.2.0",
-    "nan": "^2.0.0",
-    "node-gyp": "^3.0.1"
+    "bindings": "1.2.1",
+    "nan": "2.0.9",
+    "node-gyp": "3.0.3"
   },
   "devDependencies": {
-    "tap": "^0.4.11"
+    "tap": "0.4.13"
   },
   "gypfile": true,
   "bugs": {
