@@ -19,7 +19,7 @@
     "node-gyp": "3.0.3"
   },
   "devDependencies": {
-    "tap": "2.2.0"
+    "tap": "2.2.1"
   },
   "gypfile": true,
   "bugs": {
