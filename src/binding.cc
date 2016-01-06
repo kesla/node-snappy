@@ -136,20 +136,20 @@ NAN_METHOD(Compress) {
 }
 
 NAN_METHOD(CompressSync) {
-  std::string *input;
+  std::string input;
   std::string dst;
 
   if (node::Buffer::HasInstance(info[0]->ToObject())) {
     v8::Local<v8::Object> object = info[0]->ToObject();
     size_t length = node::Buffer::Length(object);
     const char *data = node::Buffer::Data(object);
-    input = new std::string(data, length);
+    input.assign(data, length);
   } else {
     v8::String::Utf8Value param1(info[0]->ToString());
-    input = new std::string(*param1);
+    input.assign(*param1);
   }
 
-  snappy::Compress(input->data(), input->length(), &dst);
+  snappy::Compress(input.data(), input.length(), &dst);
 
   v8::Local<v8::Object> res = Nan::NewBuffer(dst.length()).ToLocalChecked();
   memcpy(node::Buffer::Data(res), dst.c_str(), dst.length());
