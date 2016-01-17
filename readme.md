@@ -1,4 +1,4 @@
-# snappy [![Linux Status](https://img.shields.io/travis/kesla/node-snappy.svg?label=linux)](https://travis-ci.org/kesla/node-snappy) [![Windows Status](https://img.shields.io/appveyor/ci/kesla/node-snappy.svg?label=windows)](https://ci.appveyor.com/project/kesla/node-snappy)
+# snappy [![Linux Status](https://img.shields.io/travis/kesla/node-snappy.svg?label=linux)](https://travis-ci.org/kesla/node-snappy)
 
 Nodejs bindings to the [snappy](https://github.com/google/snappy) compression library
 
