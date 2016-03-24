@@ -26,3 +26,5 @@ node_modules
 
 # Bower directory
 bower_components
+
+.nyc_output
