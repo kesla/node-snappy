@@ -10,7 +10,7 @@
   },
   "main": "snappy.js",
   "scripts": {
-    "test": "tap test.js && semistandard | snazzy",
+    "test": "tap test.js --coverage && semistandard | snazzy",
     "install": "./node_modules/.bin/node-gyp rebuild"
   },
   "dependencies": {
