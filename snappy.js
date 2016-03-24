@@ -32,13 +32,13 @@ exports.isValidCompressedSync = binding.isValidCompressedSync;
  * A parser can be attached. If no parser is attached, return buffer.
  */
 exports.uncompress = function (compressed, opts, callback) {
-  if (!Buffer.isBuffer(compressed)) {
-    return callback(new Error('input must be a Buffer'));
-  }
-
   if (!callback) {
     callback = opts;
     opts = {};
+  }
+
+  if (!Buffer.isBuffer(compressed)) {
+    return callback(new Error('input must be a Buffer'));
   }
 
   if (typeof (opts.asBuffer) !== 'boolean') {

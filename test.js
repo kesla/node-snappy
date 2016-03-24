@@ -32,6 +32,13 @@ test('compress() buffer', function (t) {
   });
 });
 
+test('compress() bad input', function (t) {
+  snappy.compress(123, function (err) {
+    t.equal(err && err.message, 'input must be a String or a Buffer');
+    t.end();
+  });
+})
+
 test('compressSync() buffer', function (t) {
   var buffer = snappy.compressSync(inputBuffer);
   t.ok(Buffer.isBuffer(buffer), 'should return a Buffer');
@@ -96,6 +103,13 @@ test('uncompress() on bad input', function (t) {
     t.equal(err.message, 'Invalid input');
     t.end();
   });
+});
+
+test('uncompress() on not a Buffer', function (t) {
+  snappy.uncompress('beep boop OMG OMG OMG', function (err) {
+    t.equal(err.message, 'input must be a Buffer');
+    t.end();
+  })
 });
 
 test('uncompressSync() defaults to Buffer', function (t) {
