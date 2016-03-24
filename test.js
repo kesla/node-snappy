@@ -75,6 +75,13 @@ test('uncompress() returning a String', function * (t) {
   t.same(string, inputString);
 });
 
+test('uncompress() does not change opts', function * (t) {
+  const compressed = yield compress(inputBuffer);
+  const opts = {};
+  yield uncompress(compressed, opts);
+  t.same(opts, {});
+});
+
 test('uncompress() on bad input', function * (t) {
   t.throws(uncompress(new Buffer('beep boop OMG OMG OMG'), 'Invalid input'));
 });
@@ -99,6 +106,13 @@ test('uncompressSync() returning a String', function * (t) {
   const compressed = yield compress(inputBuffer);
   const string = uncompressSync(compressed, { asBuffer: false });
   t.same(string, inputString);
+});
+
+test('uncompress() does not change opts', function * (t) {
+  const compressed = yield compress(inputBuffer);
+  const opts = {};
+  uncompressSync(compressed, opts);
+  t.same(opts, {});
 });
 
 test('uncompressSync() on bad input', function * (t) {

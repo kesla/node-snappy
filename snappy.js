@@ -34,27 +34,21 @@ exports.isValidCompressedSync = binding.isValidCompressedSync;
 exports.uncompress = function (compressed, opts, callback) {
   if (!callback) {
     callback = opts;
-    opts = {};
   }
 
   if (!Buffer.isBuffer(compressed)) {
     return callback(new Error('input must be a Buffer'));
   }
 
-  if (typeof (opts.asBuffer) !== 'boolean') {
-    opts.asBuffer = true;
-  }
-
-  binding.uncompress(compressed, opts, callback);
+  binding.uncompress(compressed, uncompressOpts(opts), callback);
 };
 
 exports.uncompressSync = function (compressed, opts) {
   assert(Buffer.isBuffer(compressed), 'input must be a Buffer');
 
-  opts = opts || {};
-  if (typeof (opts.asBuffer) !== 'boolean') {
-    opts.asBuffer = true;
-  }
-
-  return binding.uncompressSync(compressed, opts);
+  return binding.uncompressSync(compressed, uncompressOpts(opts));
 };
+
+function uncompressOpts (opts) {
+  return (opts && typeof opts.asBuffer === 'boolean') ? opts : {asBuffer: true};
+}
