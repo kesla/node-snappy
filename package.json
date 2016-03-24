@@ -10,7 +10,7 @@
   },
   "main": "snappy.js",
   "scripts": {
-    "test": "tap test.js --coverage && semistandard | snazzy",
+    "test": "nyc ava test.js && semistandard | snazzy",
     "install": "./node_modules/.bin/node-gyp rebuild"
   },
   "dependencies": {
@@ -19,9 +19,11 @@
     "node-gyp": "3.3.0"
   },
   "devDependencies": {
+    "ava": "^0.13.0",
+    "bluebird": "^3.3.4",
+    "nyc": "^6.1.1",
     "semistandard": "^7.0.5",
-    "snazzy": "^3.0.0",
-    "tap": "^5.1.1"
+    "snazzy": "^3.0.0"
   },
   "gypfile": true,
   "bugs": {
