@@ -10,7 +10,7 @@
   },
   "main": "snappy.js",
   "scripts": {
-    "test": "tap test.js",
+    "test": "tap test.js && semistandard | snazzy",
     "install": "./node_modules/.bin/node-gyp rebuild"
   },
   "dependencies": {
@@ -19,6 +19,8 @@
     "node-gyp": "3.3.0"
   },
   "devDependencies": {
+    "semistandard": "^7.0.5",
+    "snazzy": "^3.0.0",
     "tap": "^5.1.1"
   },
   "gypfile": true,
