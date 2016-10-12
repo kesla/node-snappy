@@ -22,7 +22,7 @@
     "ava": "^0.16.0",
     "bluebird": "^3.3.4",
     "nyc": "^8.3.0",
-    "semistandard": "^9.0.0",
+    "semistandard": "^9.1.0",
     "snazzy": "^5.0.0"
   },
   "gypfile": true,
