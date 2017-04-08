@@ -14,11 +14,11 @@
   , 'standalone_static_library': 1
   , 'include_dirs': [
         '<(os_include)'
-      , 'snappy-1.1.1'
+      , 'snappy-1.1.4'
     ]
   , 'direct_dependent_settings': {
         'include_dirs': [
-            'snappy-1.1.2'
+            'snappy-1.1.4'
         ]
     }
   , 'defines': [
@@ -43,6 +43,7 @@
                 '-Wno-sign-compare'
               , '-Wno-unused-function'
             ]
+          , 'cflags!': [ '-fno-tree-vrp' ]
         }]
       , ['OS == "freebsd"', {
             'cflags': [
@@ -66,12 +67,12 @@
         }]
     ]
   , 'sources': [
-        'snappy-1.1.2/snappy-internal.h'
-      , 'snappy-1.1.2/snappy-sinksource.cc'
-      , 'snappy-1.1.2/snappy-sinksource.h'
-      , 'snappy-1.1.2/snappy-stubs-internal.cc'
-      , 'snappy-1.1.2/snappy-stubs-internal.h'
-      , 'snappy-1.1.2/snappy.cc'
-      , 'snappy-1.1.2/snappy.h'
+        'snappy-1.1.4/snappy-internal.h'
+      , 'snappy-1.1.4/snappy-sinksource.cc'
+      , 'snappy-1.1.4/snappy-sinksource.h'
+      , 'snappy-1.1.4/snappy-stubs-internal.cc'
+      , 'snappy-1.1.4/snappy-stubs-internal.h'
+      , 'snappy-1.1.4/snappy.cc'
+      , 'snappy-1.1.4/snappy.h'
     ]
 }]}
