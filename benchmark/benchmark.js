@@ -7,7 +7,7 @@ var chalk = require('chalk');
 
 var snappy = require('../snappy');
 var input = require('fs').readFileSync(
-  require('path').join(__dirname, '../deps/snappy/snappy-1.1.2/snappy.cc')
+  require('path').join(__dirname, '../deps/snappy/snappy-1.1.4/snappy.cc')
 );
 
 var round = function (number) {
