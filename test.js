@@ -22,7 +22,7 @@ test('compress() buffer', function * (t) {
 });
 
 test('compress() bad input', function * (t) {
-  t.throws(compress(123), 'input must be a String or a Buffer');
+  yield t.throws(compress(123), 'input must be a String or a Buffer');
 });
 
 test('compressSync() string', function * (t) {
@@ -83,11 +83,11 @@ test('uncompress() does not change opts', function * (t) {
 });
 
 test('uncompress() on bad input', function * (t) {
-  t.throws(uncompress(new Buffer('beep boop OMG OMG OMG'), 'Invalid input'));
+  yield t.throws(uncompress(new Buffer('beep boop OMG OMG OMG'), 'Invalid input'));
 });
 
 test('uncompress() on not a Buffer', function * (t) {
-  t.throws(uncompress('beep boop OMG OMG OMG', 'input must be a Buffer'));
+  yield t.throws(uncompress('beep boop OMG OMG OMG', 'input must be a Buffer'));
 });
 
 test('uncompressSync() defaults to Buffer', function * (t) {
