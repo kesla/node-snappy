@@ -5,7 +5,7 @@ import snappy from './snappy';
 import Promise from 'bluebird';
 
 const inputString = 'beep boop, hello world. OMG OMG OMG';
-const inputBuffer = new Buffer(inputString);
+const inputBuffer = Buffer.from(inputString);
 const compress = Promise.promisify(snappy.compress);
 const isValidCompressed = Promise.promisify(snappy.isValidCompressed);
 const uncompress = Promise.promisify(snappy.uncompress);
@@ -42,7 +42,7 @@ test('isValidCompressed() on valid data', function * (t) {
 });
 
 test('isValidCompressed() on invalid data', function * (t) {
-  const isCompressed = yield isValidCompressed(new Buffer('beep boop'));
+  const isCompressed = yield isValidCompressed(Buffer.from('beep boop'));
   t.falsy(isCompressed);
 });
 
@@ -53,7 +53,7 @@ test('isValidCompressedSync() on valid data', function * (t) {
 });
 
 test('isValidCompressedSync() on invalid data', function * (t) {
-  const isCompressed = isValidCompressedSync(new Buffer('beep boop'));
+  const isCompressed = isValidCompressedSync(Buffer.from('beep boop'));
   t.falsy(isCompressed);
 });
 
@@ -83,7 +83,7 @@ test('uncompress() does not change opts', function * (t) {
 });
 
 test('uncompress() on bad input', function * (t) {
-  yield t.throws(uncompress(new Buffer('beep boop OMG OMG OMG'), 'Invalid input'));
+  yield t.throws(uncompress(Buffer.from('beep boop OMG OMG OMG'), 'Invalid input'));
 });
 
 test('uncompress() on not a Buffer', function * (t) {
@@ -117,6 +117,6 @@ test('uncompress() does not change opts', function * (t) {
 
 test('uncompressSync() on bad input', function * (t) {
   t.throws(function () {
-    uncompressSync(new Buffer('beep boop OMG OMG OMG'));
+    uncompressSync(Buffer.from('beep boop OMG OMG OMG'));
   }, 'Invalid input');
 });
