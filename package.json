@@ -19,11 +19,11 @@
     "node-gyp": "3.6.2"
   },
   "devDependencies": {
-    "ava": "^0.16.0",
+    "ava": "^0.22.0",
     "bluebird": "^3.3.4",
-    "nyc": "^8.3.0",
-    "semistandard": "^9.0.0",
-    "snazzy": "^5.0.0"
+    "nyc": "^11.1.0",
+    "semistandard": "^11.0.0",
+    "snazzy": "^7.0.0"
   },
   "gypfile": true,
   "bugs": {
