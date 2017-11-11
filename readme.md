@@ -1,4 +1,5 @@
 # snappy [![Linux Status](https://img.shields.io/travis/kesla/node-snappy.svg?label=linux)](https://travis-ci.org/kesla/node-snappy)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fkesla%2Fnode-snappy.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fkesla%2Fnode-snappy?ref=badge_shield)
 
 Nodejs bindings to the [snappy](https://github.com/google/snappy) compression library
 
@@ -108,3 +109,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fkesla%2Fnode-snappy.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fkesla%2Fnode-snappy?ref=badge_large)
