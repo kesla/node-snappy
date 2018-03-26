@@ -8,7 +8,7 @@
 #define HAVE_BUILTIN_EXPECT 1
 
 /* Define to 1 if you have the <byteswap.h> header file. */
-/* #undef HAVE_BYTESWAP_H */
+#define HAVE_BYTESWAP_H 1
 
 /* Define to 1 if you have a definition for mmap() in <sys/mman.h>. */
 #define HAVE_FUNC_MMAP 1
