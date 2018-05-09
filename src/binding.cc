@@ -34,7 +34,7 @@ class CompressWorker : public Nan::AsyncWorker {
         , res
       };
 
-      callback->Call(2, argv);
+      callback->Call(2, argv, async_resource);
     }
 
   private:
@@ -62,7 +62,7 @@ class IsValidCompressedWorker : public Nan::AsyncWorker {
       , res ? Nan::True() : Nan::False()
     };
 
-    callback->Call(2, argv);
+    callback->Call(2, argv, async_resource);
   }
 
   private:
@@ -100,7 +100,7 @@ class UncompressWorker : public Nan::AsyncWorker {
         , res
       };
 
-      callback->Call(2, argv);
+      callback->Call(2, argv, async_resource);
     }
 
   private:
@@ -118,7 +118,7 @@ NAN_METHOD(Compress) {
     const char *data = node::Buffer::Data(object);
     input = new std::string(data, length);
   } else {
-    v8::String::Utf8Value param1(info[0]->ToString());
+    Nan::Utf8String param1(info[0]->ToString());
     input = new std::string(*param1);
   }
 
@@ -145,7 +145,7 @@ NAN_METHOD(CompressSync) {
     const char *data = node::Buffer::Data(object);
     input.assign(data, length);
   } else {
-    v8::String::Utf8Value param1(info[0]->ToString());
+    Nan::Utf8String param1(info[0]->ToString());
     input.assign(*param1);
   }
 
