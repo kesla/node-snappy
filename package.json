@@ -10,8 +10,7 @@
   },
   "main": "snappy.js",
   "scripts": {
-    "test": "nyc ava test.js && semistandard | snazzy",
-    "install": "./node_modules/.bin/node-gyp rebuild"
+    "test": "nyc ava test.js && semistandard | snazzy"
   },
   "dependencies": {
     "bindings": "^1.3.0",
