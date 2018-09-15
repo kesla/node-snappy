@@ -3,6 +3,13 @@ language: node_js
 before_install:
   - export JOBS=max
 
+install:
+  - npm ci
+  # keep the npm cache around to speed up installs
+cache:
+  directories:
+    - "$HOME/.npm"
+
 os:
   - osx
   - linux
