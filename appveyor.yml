@@ -16,7 +16,7 @@ platform:
 install:
   - ps: Install-Product node $env:nodejs_version $env:platform
   - set PATH=%APPDATA%\npm;%APPVEYOR_BUILD_FOLDER%\node_modules\.bin;%PATH%
-  - npm ci | npm i
+  - npm ci || npm i
 
 test_script:
   - npm test

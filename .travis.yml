@@ -5,7 +5,7 @@ before_install:
 
 install:
   # use npm ci if available
-  - npm ci | npm i
+  - npm ci || npm i
   # keep the npm cache around to speed up installs
 cache:
   directories:
