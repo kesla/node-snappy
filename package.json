@@ -21,7 +21,7 @@
     "prebuild-install": "^5.1.0"
   },
   "devDependencies": {
-    "ava": "^0.22.0",
+    "ava": "^0.25.0",
     "bluebird": "^3.3.4",
     "nyc": "^11.1.0",
     "prebuild": "^8.0.1",
