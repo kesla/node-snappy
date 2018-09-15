@@ -4,7 +4,8 @@ before_install:
   - export JOBS=max
 
 install:
-  - npm ci
+  # use npm ci if available
+  - npm ci | npm i
   # keep the npm cache around to speed up installs
 cache:
   directories:
