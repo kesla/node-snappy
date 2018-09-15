@@ -1,16 +1,22 @@
+version: "{build}"
+build: off
+skip_tags: true
+
 environment:
   matrix:
-    - nodejs_version: "0.8"
-    - nodejs_version: "0.10"
-    - nodejs_version: "0.12"
-    - nodejs_version: "1"
+    - nodejs_version: "4"
+    - nodejs_version: "6"
+    - nodejs_version: "8"
+    - nodejs_version: "10"
+
+platform:
+  - x86
+  - x64
+
 install:
-  - ps: if($env:nodejs_version -eq "0.8") {Install-Product node $env:nodejs_version}
-  - ps: if($env:nodejs_version -ne "0.8") {Update-NodeJsInstallation (Get-NodeJsLatestBuild $env:nodejs_version)}
-  - npm install
-build: off
+  - ps: Install-Product node $env:nodejs_version $env:platform
+  - set PATH=%APPDATA%\npm;%APPVEYOR_BUILD_FOLDER%\node_modules\.bin;%PATH%
+  - npm i
+
 test_script:
-  - node --version
-  - npm --version
-  - IF NOT %nodejs_version% == 1 npm test
-  - IF %nodejs_version% == 1 iojs node_modules\tap\bin\tap.js test.js
+  - npm test

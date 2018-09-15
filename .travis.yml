@@ -1,11 +1,14 @@
-env:
-  - CC=clang CXX=clang++ npm_config_clang=1
-language: node_js
 sudo: false
+language: node_js
+before_install:
+  - export JOBS=max
+
+os:
+  - osx
+  - linux
+
 node_js:
   - 4
   - 6
   - 8
   - 10
-before_install:
-  - if [ "$(npm -v | cut -c1)" == '1' ]; then npm -g i npm@2; fi
