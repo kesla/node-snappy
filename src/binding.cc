@@ -112,13 +112,13 @@ class UncompressWorker : public Nan::AsyncWorker {
 NAN_METHOD(Compress) {
   std::string *input;
 
-  if (node::Buffer::HasInstance(info[0]->ToObject())) {
-    v8::Local<v8::Object> object = info[0]->ToObject();
+  if (node::Buffer::HasInstance(info[0].As<v8::Object>())) {
+    v8::Local<v8::Object> object = info[0].As<v8::Object>();
     size_t length = node::Buffer::Length(object);
     const char *data = node::Buffer::Data(object);
     input = new std::string(data, length);
   } else {
-    Nan::Utf8String param1(info[0]->ToString());
+    Nan::Utf8String param1(info[0].As<v8::String>());
     input = new std::string(*param1);
   }
 
@@ -139,13 +139,13 @@ NAN_METHOD(CompressSync) {
   std::string input;
   std::string dst;
 
-  if (node::Buffer::HasInstance(info[0]->ToObject())) {
-    v8::Local<v8::Object> object = info[0]->ToObject();
+  if (node::Buffer::HasInstance(info[0].As<v8::Object>())) {
+    v8::Local<v8::Object> object = info[0].As<v8::Object>();
     size_t length = node::Buffer::Length(object);
     const char *data = node::Buffer::Data(object);
     input.assign(data, length);
   } else {
-    Nan::Utf8String param1(info[0]->ToString());
+    Nan::Utf8String param1(info[0].As<v8::String>());
     input.assign(*param1);
   }
 
@@ -158,7 +158,7 @@ NAN_METHOD(CompressSync) {
 }
 
 NAN_METHOD(IsValidCompressed) {
-  v8::Local<v8::Object> object = info[0]->ToObject();
+  v8::Local<v8::Object> object = info[0].As<v8::Object>();
   size_t length = node::Buffer::Length(object);
   const char *data = node::Buffer::Data(object);
   std::string *input = new std::string(data, length);
@@ -178,7 +178,7 @@ NAN_METHOD(IsValidCompressed) {
 
 NAN_METHOD(IsValidCompressedSync) {
 
-  v8::Local<v8::Object> object = info[0]->ToObject();
+  v8::Local<v8::Object> object = info[0].As<v8::Object>();
   size_t length = node::Buffer::Length(object);
   const char *data = node::Buffer::Data(object);
 
@@ -215,7 +215,7 @@ NAN_METHOD(Uncompress) {
 NAN_METHOD(UncompressSync) {
   std::string dst;
 
-  v8::Local<v8::Object> object = info[0]->ToObject();
+  v8::Local<v8::Object> object = info[0].As<v8::Object>();
   size_t length = node::Buffer::Length(object);
   const char *data = node::Buffer::Data(object);
 
