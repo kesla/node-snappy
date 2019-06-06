@@ -9,3 +9,5 @@ build/
 examples/
 node_modules/
 test/
+deps/
+src/
