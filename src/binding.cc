@@ -249,5 +249,5 @@ NAN_MODULE_INIT(init) {
   Nan::SetMethod(target, "uncompressSync", UncompressSync);
 }
 
-NODE_MODULE(binding, init)
+NAN_MODULE_WORKER_ENABLED(binding, init)
 }  // namespace nodesnappy
