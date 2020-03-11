@@ -29,7 +29,7 @@ exports.compressSync = function (input) {
 
 /**
  * Asyncronous decide if a buffer is compressed in a correct way.
- * 
+ *
  * @type {(buffer: Buffer,  callback: (err: Error|null, isValid?: boolean) => void) => void}
  */
 exports.isValidCompressed = binding.isValidCompressed;
@@ -41,7 +41,7 @@ exports.isValidCompressedSync = binding.isValidCompressedSync;
 
 /**
  * Asyncronous uncompress previously compressed data.
- * 
+ *
  * @param {Buffer} compressed
  * @param {any} opts
  * @param {(err: Error, uncompressed?:(string|Buffer)) => void} callback
@@ -62,7 +62,7 @@ exports.uncompress = function (compressed, opts, callback) {
  * @param {Buffer} compressed
  * @param {any} opts
  * @return {string|Buffer}
- */exports.uncompressSync =  function (compressed, opts) {
+*/exports.uncompressSync = function (compressed, opts) {
   assert(Buffer.isBuffer(compressed), 'input must be a Buffer');
 
   return binding.uncompressSync(compressed, uncompressOpts(opts));
