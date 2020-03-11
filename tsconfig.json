@@ -1,0 +1,10 @@
+{
+  "files": ["./snappy.js"],
+
+  "compilerOptions": {
+    "allowJs": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "strict": false
+  }
+}

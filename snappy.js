@@ -3,10 +3,6 @@ var binding = require('bindings')('binding');
 var assert = require('assert');
 
 /**
- * @typedef {{ asBuffer: boolean; }|any} UncompressOptsType
- */
-
-/**
  * Compress asyncronous.
  * If input isn't a string or buffer, automatically convert to buffer by using
  * JSON.stringify.
@@ -34,14 +30,12 @@ exports.compressSync = function (input) {
 /**
  * Asyncronous decide if a buffer is compressed in a correct way.
  * 
- * @param {Buffer} input
- * @param {(err: Error|null, isValid?: boolean) => void}
+ * @type {(buffer: Buffer,  callback: (err: Error|null, isValid?: boolean) => void) => void}
  */
 exports.isValidCompressed = binding.isValidCompressed;
 
 /**
- * @param {Buffer} input
- * @return {boolean}
+ * @type {(buffer: Buffer) => boolean}
  */
 exports.isValidCompressedSync = binding.isValidCompressedSync;
 
@@ -49,7 +43,7 @@ exports.isValidCompressedSync = binding.isValidCompressedSync;
  * Asyncronous uncompress previously compressed data.
  * 
  * @param {Buffer} compressed
- * @param {UncompressOptsType} opts
+ * @param {any} opts
  * @param {(err: Error, uncompressed?:(string|Buffer)) => void} callback
  */
 exports.uncompress = function (compressed, opts, callback) {
@@ -66,7 +60,7 @@ exports.uncompress = function (compressed, opts, callback) {
 
 /**
  * @param {Buffer} compressed
- * @param {UncompressOptsType} opts
+ * @param {any} opts
  * @return {string|Buffer}
  */exports.uncompressSync =  function (compressed, opts) {
   assert(Buffer.isBuffer(compressed), 'input must be a Buffer');
@@ -75,7 +69,7 @@ exports.uncompress = function (compressed, opts, callback) {
 };
 
 /**
- * @param {UncompressOptsType} opts
+ * @param {any} opts
  */
 function uncompressOpts (opts) {
   return (opts && typeof opts.asBuffer === 'boolean') ? opts : {asBuffer: true};
