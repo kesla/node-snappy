@@ -19,15 +19,13 @@ npm install snappy
 ### Input
 
 ```javascript
-var snappy = require('snappy')
+const snappy = require('snappy')
 
-snappy.compress('beep boop', function (err, compressed) {
-  console.log('compressed is a Buffer', compressed)
-  // return it as a string
-  snappy.uncompress(compressed, { asBuffer: false }, function (err, original) {
-    console.log('the original String', original)
-  })
-})
+const compressed = await snappy.compress('beep boop')
+console.log('compressed is a Buffer', compressed)
+// return it as a string
+const original = await snappy.uncompress(compressed, { asBuffer: false })
+console.log('the original String', original)
 ```
 
 ### Output
@@ -39,19 +37,17 @@ the original String beep boop
 
 ## API
 
-### snappy.compress(input, callback)
+### snappy.compress(input: Buffer|string) => Promise<Buffer>
 
-Compress `input`, which can be a `Buffer` or a `String`.
+Compress `input`, which can be a `Buffer` or a `string`.
 
-The `callback` function will be called with a single `error` if the operation failed for any reason. If successful the first argument will be `null` and the second argument will be the `value` as a ``Buffer`.
-
-### snappy.compressSync(input)
+### snappy.compressSync(input: Buffer|string) => Buffer
 
 The synchronous version of `snappy.compress`, returns the compressed value.
 
-### snappy.uncompress(compressed, [options,] callback)
+### snappy.uncompress(compressed: Buffer, [options]) => Promise<Buffer|string>
 
-Uncompress `compressed` and call `callback` with `err` and `decompressed`.
+Uncompress `compressed` and return `decompressed`.
 
 #### `options`
 
@@ -59,17 +55,17 @@ Uncompress `compressed` and call `callback` with `err` and `decompressed`.
 
 The `callback` function will be called with a single `error` if the operation failed for any reason. If successful the first argument will be `null` and the second argument will be the `value` as a `String` or `Buffer` depending on the `asBuffer` option.
 
-### snappy.uncompressSync(compressed, [options])
+### snappy.uncompressSync(compressed: Buffer, [options]) => Buffer|string
 
 The synchronous version of `snappy.uncompress`, returns the uncompressed value.
 
-### snappy.isValidCompressed(input, callback)
+### snappy.isValidCompressed(input: Buffer) => Promise<boolean>
 
 Check is input is a valid compressed `Buffer`.
 
 The `callback` function will be called with a single `error` if the operation failed for any reason and the second argument will be `true` if input is a valid snappy compressed Buffer, `false` otherwise.
 
-### snappy.isValidCompressedSync(input)
+### snappy.isValidCompressedSync(input: Buffer) => boolean
 
 The synchronous version of `snappy.isValidCompressed`, returns a boolean indicating if input was correctly compressed or not.
 
