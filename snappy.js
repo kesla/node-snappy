@@ -72,5 +72,5 @@ exports.uncompress = function (compressed, opts, callback) {
  * @param {any} opts
  */
 function uncompressOpts (opts) {
-  return (opts && typeof opts.asBuffer === 'boolean') ? opts : {asBuffer: true};
+  return (opts && typeof opts.asBuffer === 'boolean') ? opts : { asBuffer: true };
 }
