@@ -11,7 +11,7 @@
   "main": "snappy.js",
   "scripts": {
     "pretest": "node-gyp rebuild",
-    "test": "nyc ava test.js && semistandard | snazzy && prebuild-ci",
+    "test": "nyc ava test.js && standard | snazzy && prebuild-ci",
     "install": "prebuild-install || node-gyp rebuild",
     "rebuild": "prebuild --compile",
     "prebuild": "prebuild --all --strip --verbose",
@@ -29,8 +29,8 @@
     "nyc": "^15.0.0",
     "prebuild": "^10.0.0",
     "prebuild-ci": "^3.1.0",
-    "semistandard": "^14.2.0",
-    "snazzy": "^8.0.0"
+    "snazzy": "^8.0.0",
+    "standard": "^14.3.1"
   },
   "gypfile": true,
   "bugs": {
