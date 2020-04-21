@@ -35,7 +35,8 @@
       }],
       ['OS == "mac"', {
         'xcode_settings': {
-          'WARNING_CFLAGS': [ '-Wno-sign-compare', '-Wno-unused-function' ]
+          'WARNING_CFLAGS': [ '-Wno-sign-compare', '-Wno-unused-function' ],
+          'MACOSX_DEPLOYMENT_TARGET': '10.9'
         }
       }]
     ],
