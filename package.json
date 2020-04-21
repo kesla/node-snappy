@@ -23,6 +23,7 @@
     "prebuild-install": "5.3.0"
   },
   "devDependencies": {
+    "@types/node": "^13.13.1",
     "ava": "^0.25.0",
     "bluebird": "^3.5.3",
     "nyc": "^11.9.0",
