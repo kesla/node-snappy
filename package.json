@@ -2,7 +2,7 @@
   "author": "David Björklund <david.bjorklund@gmail.com>",
   "name": "snappy",
   "description": "Nodejs bindings to Google's Snappy compression library",
-  "version": "6.3.3",
+  "version": "6.3.4",
   "homepage": "https://github.com/kesla/node-snappy",
   "repository": {
     "type": "git",
